@@ -1029,6 +1029,82 @@
 
     INTERACTIONS.push({ id: 'rupia_rain', fn: interactionRupiaRain });
 
+    // ===== INT-05: ETERNAL STANDUP =====
+    function interactionEternalStandup() {
+      GameState.cleanupFn = () => {};
+      GameState.currentInteraction = 'eternal_standup';
+      GameState.passiveDrainPaused = true;
+      const area = document.getElementById('interaction-area');
+      const title = document.getElementById('interaction-title');
+      title.textContent = 'DAILY STANDUP';
+
+      area.replaceChildren();
+
+      const timerDisplay = document.createElement('div');
+      timerDisplay.className = 'int-counter';
+      timerDisplay.style.fontSize = '28px';
+      timerDisplay.textContent = '0:30';
+
+      const statusText = document.createElement('div');
+      statusText.style.cssText = 'font-family:"Press Start 2P",monospace;font-size:9px;color:var(--beige);text-align:center;min-height:24px;';
+
+      const leaveBtn = document.createElement('button');
+      leaveBtn.className = 'int-btn';
+      leaveBtn.textContent = 'LEAVE MEETING';
+      leaveBtn.style.display = 'none';
+
+      area.appendChild(timerDisplay);
+      area.appendChild(statusText);
+      area.appendChild(leaveBtn);
+
+      let seconds = 30;
+      let resets = 0;
+      let done = false;
+
+      const interval = setInterval(() => {
+        if (done) return;
+        seconds--;
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        timerDisplay.textContent = m + ':' + s.toString().padStart(2, '0');
+
+        if (seconds <= 0) {
+          resets++;
+          statusText.textContent = 'RESCHEDULED TO TOMORROW';
+          timerDisplay.textContent = '';
+          setTimeout(() => {
+            if (done) return;
+            statusText.textContent = '';
+            if (resets >= 3) {
+              leaveBtn.style.display = 'inline-block';
+              timerDisplay.textContent = 'WAITING...';
+              clearInterval(interval);
+            } else {
+              seconds = 30;
+              timerDisplay.textContent = '0:30';
+            }
+          }, 1000);
+        }
+      }, 1000);
+
+      leaveBtn.addEventListener('click', () => {
+        if (done) return;
+        done = true;
+        playSound('click');
+        completeInteraction(-6, 'FREEDOM ACHIEVED (TEMPORARILY)');
+      });
+
+      GameState.cleanupFn = () => {
+        done = true;
+        clearInterval(interval);
+        GameState.passiveDrainPaused = false;
+        area.replaceChildren();
+        title.textContent = '';
+      };
+    }
+
+    INTERACTIONS.push({ id: 'eternal_standup', fn: interactionEternalStandup });
+
     // ===== SOUND =====
     let _audioCtx = null;
     function getAudioCtx() {
