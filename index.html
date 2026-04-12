@@ -39,27 +39,618 @@
 
     /* ===== PIXEL FONT UTILITY ===== */
     .pixel { font-family: 'Press Start 2P', monospace; }
+
+    /* ===== CORPORATE SCREEN ===== */
+    #screen-corporate {
+      background: var(--corporate-gray);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .corporate-logo {
+      font-size: 14px;
+      font-weight: 300;
+      letter-spacing: 4px;
+      color: #888;
+      margin-bottom: 60px;
+      text-transform: uppercase;
+    }
+
+    .corporate-logo span { color: var(--corporate-blue); font-weight: 600; }
+
+    .corporate-headline {
+      font-size: 42px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .corporate-subtext {
+      font-size: 18px;
+      color: #666;
+      margin-bottom: 48px;
+    }
+
+    .corporate-btn {
+      background: var(--corporate-blue);
+      color: white;
+      border: none;
+      padding: 16px 48px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+      box-shadow: 0 4px 12px rgba(37,99,235,0.4);
+    }
+
+    .corporate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37,99,235,0.5);
+    }
+
+    @keyframes glitch {
+      0%   { clip-path: inset(0 0 95% 0); transform: translateX(-5px); }
+      10%  { clip-path: inset(30% 0 50% 0); transform: translateX(5px); }
+      20%  { clip-path: inset(60% 0 20% 0); transform: translateX(-3px); }
+      30%  { clip-path: inset(10% 0 80% 0); transform: translateX(3px); }
+      40%  { clip-path: inset(50% 0 10% 0); transform: translateX(-5px); }
+      50%  { clip-path: inset(0 0 0 0);     transform: translateX(0); opacity: 0.5; }
+      60%  { clip-path: inset(20% 0 60% 0); transform: translateX(4px); }
+      70%  { clip-path: inset(70% 0 5% 0);  transform: translateX(-4px); }
+      80%  { clip-path: inset(5% 0 90% 0);  transform: translateX(2px); }
+      90%  { clip-path: inset(40% 0 40% 0); transform: translateX(-2px); }
+      100% { clip-path: inset(0 0 0 0);     transform: translateX(0); opacity: 0; }
+    }
+
+    .glitching { animation: glitch 0.5s steps(1) forwards; }
+
+    /* ===== LOADING SCREEN ===== */
+    #screen-loading {
+      background: var(--black);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+    }
+
+    .loading-text {
+      font-family: 'Press Start 2P', monospace;
+      color: var(--beige);
+      font-size: 14px;
+      line-height: 2;
+      text-align: center;
+      min-height: 60px;
+    }
+
+    .loading-bar-container {
+      width: 300px;
+      height: 20px;
+      border: 3px solid var(--gold);
+      box-shadow: 4px 4px 0 #000, -2px -2px 0 #000;
+      background: #0a0a0a;
+    }
+
+    .loading-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--gold);
+      transition: none;
+    }
+
+    /* ===== GAME SCREEN ===== */
+    #screen-game {
+      background: var(--green-dark);
+      flex-direction: column;
+      position: relative;
+    }
+
+    #screen-game::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.3) 2px,
+        rgba(0,0,0,0.3) 4px
+      );
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    @keyframes crt-flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.97; }
+    }
+    #screen-game { animation: crt-flicker 4s ease-in-out infinite; }
+
+    .game-hud {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      background: var(--black);
+      border-bottom: 4px solid var(--gold);
+      box-shadow: 0 4px 0 #000;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      color: var(--beige);
+      z-index: 5;
+      flex-shrink: 0;
+    }
+
+    .hud-title { color: var(--gold); font-size: 8px; }
+    .hud-focus { display: flex; align-items: center; gap: 6px; }
+    .hud-focus span { font-size: 16px; }
+    .hud-timer { color: var(--beige); }
+
+    .game-interaction {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    .dialog-box {
+      background: var(--green-dark);
+      border: none;
+      box-shadow:
+        0 0 0 4px var(--gold),
+        0 0 0 8px var(--black),
+        0 0 0 12px var(--gold);
+      padding: 24px 32px;
+      max-width: 700px;
+      width: 100%;
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+    }
+
+    .dialog-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      color: var(--gold);
+      text-align: center;
+      border-bottom: 2px solid var(--gold);
+      padding-bottom: 12px;
+      width: 100%;
+      text-shadow: 2px 2px 0 #000, -1px -1px 0 #000;
+      letter-spacing: 2px;
+    }
+
+    #interaction-area {
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-message-bar {
+      background: var(--black);
+      border-top: 4px solid var(--gold);
+      padding: 12px 24px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      color: var(--beige);
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    @keyframes hud-danger {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .hud-danger { animation: hud-danger 0.5s ease-in-out infinite; }
+
+    /* ===== GAME OVER SCREEN ===== */
+    #screen-gameover {
+      background: var(--black);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      font-family: 'Press Start 2P', monospace;
+      text-align: center;
+    }
+
+    .gameover-title {
+      font-size: 48px;
+      color: var(--red-dark);
+      text-shadow: 4px 4px 0 #000;
+      letter-spacing: 4px;
+    }
+
+    .gameover-subtitle {
+      font-size: 14px;
+      color: var(--beige);
+      margin-bottom: 20px;
+    }
+
+    .gameover-stats {
+      color: var(--gold);
+      font-size: 10px;
+      line-height: 2.5;
+    }
+
+    .pixel-btn {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      background: var(--green-dark);
+      color: var(--gold);
+      border: none;
+      padding: 14px 28px;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 var(--gold), -2px -2px 0 var(--gold);
+      margin-top: 20px;
+    }
+
+    .pixel-btn:hover { background: var(--gold); color: var(--black); }
+
+    .game-hud.focus-low   { border-bottom-color: #cc6600; }
+    .game-hud.focus-crit  { border-bottom-color: var(--red-dark); }
   </style>
 </head>
 <body>
   <!-- Corporate Screen -->
-  <div id="screen-corporate" class="screen"></div>
+  <div id="screen-corporate" class="screen active">
+    <div class="corporate-logo">Pro<span>Flow</span>&#8482;</div>
+    <h1 class="corporate-headline">Optimize your productivity</h1>
+    <p class="corporate-subtext">Start your focused work session</p>
+    <button class="corporate-btn" id="btn-start">Start Working</button>
+  </div>
 
   <!-- Loading Screen -->
-  <div id="screen-loading" class="screen"></div>
+  <div id="screen-loading" class="screen">
+    <div class="loading-text" id="loading-text">LOADING SAVE FILE...</div>
+    <div class="loading-bar-container">
+      <div class="loading-bar-fill" id="loading-bar"></div>
+    </div>
+  </div>
 
   <!-- Game Screen -->
-  <div id="screen-game" class="screen"></div>
+  <div id="screen-game" class="screen">
+    <div class="game-hud">
+      <div class="hud-title">ANTI-PRODUCTIVITY SIM</div>
+      <div class="hud-focus" id="hud-focus">
+        <span>&#x1F9E0;</span><span>&#x1F9E0;</span><span>&#x1F9E0;</span><span>&#x1F9E0;</span><span>&#x1F9E0;</span>
+      </div>
+      <div class="hud-timer" id="hud-timer">&#x23F1; 00:00</div>
+    </div>
+    <div class="game-interaction">
+      <div class="dialog-box">
+        <div class="dialog-title" id="interaction-title">LOADING...</div>
+        <div id="interaction-area"></div>
+      </div>
+    </div>
+    <div class="game-message-bar" id="message-bar"></div>
+  </div>
 
   <!-- Game Over Screen -->
-  <div id="screen-gameover" class="screen"></div>
+  <div id="screen-gameover" class="screen">
+    <div class="gameover-title">GAME OVER</div>
+    <div class="gameover-subtitle">YOU DID ACTUAL WORK</div>
+    <div class="gameover-stats" id="gameover-stats"></div>
+    <button class="pixel-btn" id="btn-play-again">[ PLAY AGAIN ]</button>
+  </div>
 
   <!-- Achievement Overlay (always present, shown/hidden) -->
   <div id="achievement-overlay" style="display:none; position:fixed; top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100;"></div>
 
   <script>
-    /* ===== JS PLACEHOLDER ===== */
-    console.log('Anti-Productivity Simulator loaded');
+    // ===== STATE =====
+    const GameState = {
+      screen: 'corporate',
+      focusPoints: 100,
+      timeWasted: 0,
+      interactionCount: 0,
+      achievements: new Set(),
+      currentInteraction: null,
+      lastInteraction: null,
+      passiveDrainPaused: false,
+      cleanupFn: null,
+      firstInteractionTime: null,
+      _timerInterval: null,
+      _drainInterval: null
+    };
+
+    function resetGameState() {
+      GameState.screen = 'corporate';
+      GameState.focusPoints = 100;
+      GameState.timeWasted = 0;
+      GameState.interactionCount = 0;
+      GameState.achievements = new Set();
+      GameState.currentInteraction = null;
+      GameState.lastInteraction = null;
+      GameState.passiveDrainPaused = false;
+      GameState.cleanupFn = null;
+      GameState.firstInteractionTime = null;
+      if (GameState._timerInterval) clearInterval(GameState._timerInterval);
+      if (GameState._drainInterval) clearInterval(GameState._drainInterval);
+      GameState._timerInterval = null;
+      GameState._drainInterval = null;
+    }
+
+    // ===== SCREEN HELPERS =====
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-' + id).classList.add('active');
+      GameState.screen = id;
+    }
+
+    // ===== SCREENS =====
+    function showCorporateScreen() {
+      resetGameState();
+      showScreen('corporate');
+    }
+
+    // ===== BUTTON WIRING =====
+    document.getElementById('btn-start').addEventListener('click', function() {
+      const corp = document.getElementById('screen-corporate');
+      corp.classList.add('glitching');
+      setTimeout(() => showLoadingScreen(), 500);
+    });
+
+    // ===== LOADING SCREEN =====
+    function showLoadingScreen() {
+      showScreen('loading');
+      const txt = document.getElementById('loading-text');
+      const bar = document.getElementById('loading-bar');
+
+      txt.textContent = 'LOADING SAVE FILE...';
+      bar.style.width = '0%';
+
+      let progress = 0;
+      const fillInterval = setInterval(() => {
+        progress += Math.random() * 15 + 3;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(fillInterval);
+          bar.style.width = '100%';
+
+          setTimeout(() => {
+            bar.style.width = '0%';
+            txt.textContent = 'FILE CORRUPT...';
+
+            setTimeout(() => {
+              txt.textContent = 'LOADING ANYWAY';
+
+              setTimeout(() => {
+                showGameScreen();
+              }, 400);
+            }, 600);
+          }, 800);
+        } else {
+          bar.style.width = progress + '%';
+        }
+      }, 100);
+    }
+
+    // ===== HUD =====
+    function updateFocusDisplay() {
+      const fp = GameState.focusPoints;
+      const icons = document.querySelectorAll('#hud-focus span');
+      for (let i = 0; i < 5; i++) {
+        const threshold = (5 - i) * 20;
+        icons[4 - i].textContent = fp <= threshold ? '\u{1F480}' : '\u{1F9E0}';
+      }
+      const hud = document.querySelector('.game-hud');
+      hud.classList.remove('hud-danger', 'focus-low', 'focus-crit');
+      if (fp <= 20) { hud.classList.add('hud-danger'); hud.classList.add('focus-crit'); }
+      else if (fp <= 40) hud.classList.add('focus-low');
+    }
+
+    function formatTime(seconds) {
+      const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+      const s = (seconds % 60).toString().padStart(2, '0');
+      return m + ':' + s;
+    }
+
+    function updateHUD() {
+      updateFocusDisplay();
+      document.getElementById('hud-timer').textContent = '\u23F1 ' + formatTime(GameState.timeWasted);
+    }
+
+    function startTimerWasted() {
+      if (GameState._timerInterval) clearInterval(GameState._timerInterval);
+      GameState._timerInterval = setInterval(() => {
+        GameState.timeWasted++;
+        updateHUD();
+      }, 1000);
+    }
+
+    // ===== DRAIN =====
+    function applyFocusDelta(n) {
+      GameState.focusPoints = Math.max(0, GameState.focusPoints + n);
+      updateFocusDisplay();
+      checkAchievements();
+      if (GameState.focusPoints === 0) {
+        showGameOverScreen();
+      }
+    }
+
+    function startPassiveDrain() {
+      if (GameState._drainInterval) clearInterval(GameState._drainInterval);
+      GameState._drainInterval = setInterval(() => {
+        if (!GameState.passiveDrainPaused) {
+          playSound('drain');
+          applyFocusDelta(-1);
+        }
+      }, 3000);
+    }
+
+    // ===== GAME OVER =====
+    function showGameOverScreen() {
+      teardownCurrentInteraction();
+      if (GameState._timerInterval) clearInterval(GameState._timerInterval);
+      if (GameState._drainInterval) clearInterval(GameState._drainInterval);
+      showScreen('gameover');
+
+      const stats = document.getElementById('gameover-stats');
+      const lines = [
+        'TIME WASTED: ' + formatTime(GameState.timeWasted),
+        'INTERACTIONS SURVIVED: ' + GameState.interactionCount,
+        'ACHIEVEMENTS: ' + GameState.achievements.size + ' / 6'
+      ];
+      stats.textContent = '';
+      lines.forEach(line => {
+        const p = document.createElement('div');
+        p.textContent = line;
+        stats.appendChild(p);
+      });
+    }
+
+    document.getElementById('btn-play-again').addEventListener('click', showCorporateScreen);
+
+    // ===== ENGINE =====
+    function teardownCurrentInteraction() {
+      if (GameState.cleanupFn) {
+        try { GameState.cleanupFn(); } catch(e) {}
+        GameState.cleanupFn = null;
+      }
+    }
+
+    const IRONIC_MESSAGES = [
+      'PRODUCTIVITY DECREASED SUCCESSFULLY',
+      'GREAT JOB AVOIDING WORK',
+      'YOU ARE NOW 3% LESS EFFICIENT',
+      'BOSS IMPRESSION: MAXIMUM',
+      'THIS SESSION HAS BEEN LOGGED',
+      'HR HAS BEEN NOTIFIED (JUST KIDDING)',
+      'CONGRATULATIONS ON YOUR PROGRESS (THERE IS NONE)',
+      'YOUR CONTRIBUTION HAS BEEN NOTED AND IGNORED',
+      'SYNERGY LEVELS: CRITICAL',
+      'PLEASE UPDATE YOUR STATUS IN JIRA'
+    ];
+
+    function completeInteraction(penalty, msg) {
+      const id = GameState.currentInteraction;
+      playSound('complete');
+      teardownCurrentInteraction();
+      applyFocusDelta(penalty);
+      GameState.interactionCount++;
+      GameState.lastInteraction = id;
+      if (GameState.firstInteractionTime === null) {
+        GameState.firstInteractionTime = GameState.timeWasted;
+      }
+      checkAchievements();
+
+      typewriterMessage(msg, () => {
+        setTimeout(() => {
+          const ironic = IRONIC_MESSAGES[Math.floor(Math.random() * IRONIC_MESSAGES.length)];
+          typewriterMessage(ironic, () => {
+            if (GameState.screen === 'game') {
+              setTimeout(() => loadRandomInteraction(), 1000);
+            }
+          });
+        }, 500);
+      });
+    }
+
+    const INTERACTIONS = [];
+
+    function loadRandomInteraction() {
+      if (GameState.screen !== 'game') return;
+      if (INTERACTIONS.length === 0) return;
+      const available = INTERACTIONS.filter(i => i.id !== GameState.lastInteraction);
+      const pool = available.length > 0 ? available : INTERACTIONS;
+      const pick = pool[Math.floor(Math.random() * pool.length)];
+      GameState.currentInteraction = pick.id;
+      document.getElementById('interaction-area').replaceChildren();
+      pick.fn();
+    }
+
+    // Stubs filled in later tasks
+    function checkAchievements() {}
+    function showAchievement(id) {}
+
+    function typewriterMessage(text, onDone) {
+      const bar = document.getElementById('message-bar');
+      bar.textContent = '';
+      let i = 0;
+      const interval = setInterval(() => {
+        bar.textContent += text[i];
+        i++;
+        if (i >= text.length) {
+          clearInterval(interval);
+          if (onDone) onDone();
+        }
+      }, 50);
+    }
+
+    // ===== GAME SCREEN =====
+    function showGameScreen() {
+      showScreen('game');
+      updateHUD();
+      startTimerWasted();
+      startPassiveDrain();
+      setTimeout(() => loadRandomInteraction(), 500);
+    }
+
+    // ===== SOUND =====
+    let _audioCtx = null;
+    function getAudioCtx() {
+      if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      return _audioCtx;
+    }
+
+    function playTone(freq, type, duration, gainVal) {
+      gainVal = gainVal || 0.3;
+      try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(gainVal, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + duration);
+      } catch(e) {}
+    }
+
+    function playSound(type) {
+      switch(type) {
+        case 'click':
+          playTone(880, 'square', 0.08);
+          break;
+        case 'drain':
+          playTone(220, 'square', 0.15, 0.15);
+          break;
+        case 'complete':
+          playTone(440, 'square', 0.1);
+          setTimeout(() => playTone(330, 'square', 0.1), 120);
+          break;
+        case 'meeting':
+          playTone(200, 'sawtooth', 0.15, 0.4);
+          setTimeout(() => playTone(188, 'sawtooth', 0.15, 0.4), 100);
+          break;
+        case 'achievement':
+          [261, 329, 392, 523].forEach(function(f, i) {
+            setTimeout(() => playTone(f, 'square', 0.2, 0.3), i * 80);
+          });
+          break;
+      }
+    }
   </script>
 </body>
 </html>
