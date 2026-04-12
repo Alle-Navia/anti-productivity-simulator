@@ -306,6 +306,90 @@
 
     .game-hud.focus-low   { border-bottom-color: #cc6600; }
     .game-hud.focus-crit  { border-bottom-color: var(--red-dark); }
+
+    /* ===== SHARED INTERACTION STYLES ===== */
+    .int-counter {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 18px;
+      color: var(--beige);
+      margin-bottom: 16px;
+    }
+
+    .int-btn {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px;
+      padding: 12px 24px;
+      background: var(--green-dark);
+      color: var(--gold);
+      border: 3px solid var(--gold);
+      cursor: pointer;
+      box-shadow: 4px 4px 0 #000;
+      transition: transform 0.05s;
+    }
+    .int-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #000; }
+
+    .confetti-particle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      pointer-events: none;
+    }
+
+    @keyframes confetti-fall {
+      to { transform: translateY(200px) rotate(720deg); opacity: 0; }
+    }
+
+    /* Meeting enemy */
+    .meeting-enemy {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      background: #c8a200;
+      box-shadow: 8px 8px 0 #000, 8px 12px 0 #000, 16px 8px 0 #000, 16px 12px 0 #000;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .meeting-label {
+      position: absolute;
+      top: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 6px;
+      color: var(--red-dark);
+      white-space: nowrap;
+    }
+
+    .survive-bar-container {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 14px;
+      border: 2px solid var(--gold);
+      background: #000;
+    }
+
+    .survive-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: #00cc00;
+      transition: width 0.1s linear;
+    }
+
+    /* Rupia styles */
+    .rupia {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      transform: rotate(45deg);
+      cursor: pointer;
+      pointer-events: auto;
+    }
+    .rupia.gold { background: #c8a200; box-shadow: 2px 2px 0 #000; }
+    .rupia.green { background: #00a020; box-shadow: 2px 2px 0 #000; }
   </style>
 </head>
 <body>
@@ -603,6 +687,67 @@
       startPassiveDrain();
       setTimeout(() => loadRandomInteraction(), 500);
     }
+
+    // ===== INT-01: CLICK QUEST =====
+    function interactionClickQuest() {
+      GameState.cleanupFn = () => {
+        btn.removeEventListener('click', onClick);
+        area.replaceChildren();
+        title.textContent = '';
+      };
+      GameState.currentInteraction = 'click_quest';
+      const area = document.getElementById('interaction-area');
+      const title = document.getElementById('interaction-title');
+      title.textContent = 'UNLOCK MOTIVATION';
+
+      area.replaceChildren();
+      let count = 0;
+      const colors = ['#c8a200', '#f0e68c', '#8b0000', '#1a8b1a', '#ffffff'];
+
+      const counter = document.createElement('div');
+      counter.className = 'int-counter';
+      counter.textContent = '0 / 37 CLICKS';
+
+      const btn = document.createElement('button');
+      btn.className = 'int-btn';
+      btn.textContent = 'CLICK ME';
+
+      area.appendChild(counter);
+      area.appendChild(btn);
+
+      function spawnConfetti() {
+        for (let i = 0; i < 20; i++) {
+          const p = document.createElement('div');
+          p.className = 'confetti-particle';
+          p.style.cssText = 'left:' + (Math.random() * 100) + '%;top:' + (Math.random() * 50) + '%;background:' + colors[Math.floor(Math.random() * colors.length)] + ';animation:confetti-fall ' + (0.5 + Math.random() * 0.5) + 's ease-out forwards;animation-delay:' + (Math.random() * 0.3) + 's;';
+          area.appendChild(p);
+        }
+      }
+
+      function onClick() {
+        playSound('click');
+        count++;
+        counter.textContent = count + ' / 37 CLICKS';
+        if (count >= 37) {
+          btn.removeEventListener('click', onClick);
+          spawnConfetti();
+          setTimeout(() => {
+            showAchievement('CLICKED_WITHOUT_PURPOSE');
+            completeInteraction(-8, 'MOTIVATION NOT FOUND');
+          }, 1000);
+        }
+      }
+
+      btn.addEventListener('click', onClick);
+
+      GameState.cleanupFn = () => {
+        btn.removeEventListener('click', onClick);
+        area.replaceChildren();
+        title.textContent = '';
+      };
+    }
+
+    INTERACTIONS.push({ id: 'click_quest', fn: interactionClickQuest });
 
     // ===== SOUND =====
     let _audioCtx = null;
