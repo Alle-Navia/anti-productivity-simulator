@@ -941,6 +941,94 @@
 
     INTERACTIONS.push({ id: 'meeting_escape', fn: interactionMeetingEscape });
 
+    // ===== INT-04: RUPIA RAIN =====
+    function interactionRupiaRain() {
+      GameState.cleanupFn = () => {};
+      GameState.currentInteraction = 'rupia_rain';
+      const area = document.getElementById('interaction-area');
+      const title = document.getElementById('interaction-title');
+      title.textContent = 'COLLECT RUPIAS';
+
+      area.replaceChildren();
+      area.style.position = 'relative';
+      area.style.overflow = 'hidden';
+
+      const counter = document.createElement('div');
+      counter.style.cssText = 'position:absolute;top:8px;left:50%;transform:translateX(-50%);font-family:"Press Start 2P",monospace;font-size:9px;color:var(--gold);';
+      counter.textContent = 'GOLD: 0 / 10';
+
+      const timerEl = document.createElement('div');
+      timerEl.style.cssText = 'position:absolute;top:28px;left:50%;transform:translateX(-50%);font-family:"Press Start 2P",monospace;font-size:8px;color:var(--beige);';
+      timerEl.textContent = 'TIME: 20';
+
+      area.appendChild(counter);
+      area.appendChild(timerEl);
+
+      let goldCaught = 0;
+      let timeLeft = 20;
+      let done = false;
+
+      function spawnRupia() {
+        if (done) return;
+        const rect = area.getBoundingClientRect();
+        const isGold = Math.random() > 0.4;
+        const r = document.createElement('div');
+        r.className = 'rupia ' + (isGold ? 'gold' : 'green');
+        r.style.left = (Math.random() * (rect.width - 30) + 5) + 'px';
+        r.style.top = '-20px';
+        area.appendChild(r);
+
+        const duration = 3000 + Math.random() * 2000;
+        r.style.transition = 'top ' + (duration / 1000) + 's linear';
+        requestAnimationFrame(() => { r.style.top = (rect.height + 20) + 'px'; });
+
+        r.addEventListener('click', () => {
+          if (done || !area.contains(r)) return;
+          playSound('click');
+          area.removeChild(r);
+          if (isGold) {
+            goldCaught++;
+            counter.textContent = 'GOLD: ' + goldCaught + ' / 10';
+            if (goldCaught >= 10) finish('win');
+          } else {
+            goldCaught = 0;
+            counter.textContent = 'GOLD: 0 / 10 (RESET!)';
+            setTimeout(() => { if (!done) counter.textContent = 'GOLD: 0 / 10'; }, 800);
+          }
+        });
+
+        setTimeout(() => { if (area.contains(r)) area.removeChild(r); }, duration + 100);
+      }
+
+      function finish(reason) {
+        if (done) return;
+        done = true;
+        clearInterval(spawnInterval);
+        clearInterval(timerInterval);
+        completeInteraction(-7, reason === 'win' ? 'WALLET FULL, PRODUCTIVITY EMPTY' : 'DROPPED EVERYTHING');
+      }
+
+      const spawnInterval = setInterval(spawnRupia, 800);
+      spawnRupia();
+
+      const timerInterval = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = 'TIME: ' + timeLeft;
+        if (timeLeft <= 0) finish('timeout');
+      }, 1000);
+
+      GameState.cleanupFn = () => {
+        done = true;
+        clearInterval(spawnInterval);
+        clearInterval(timerInterval);
+        area.replaceChildren();
+        area.style.overflow = '';
+        title.textContent = '';
+      };
+    }
+
+    INTERACTIONS.push({ id: 'rupia_rain', fn: interactionRupiaRain });
+
     // ===== SOUND =====
     let _audioCtx = null;
     function getAudioCtx() {
