@@ -749,6 +749,91 @@
 
     INTERACTIONS.push({ id: 'click_quest', fn: interactionClickQuest });
 
+    // ===== INT-02: ELUSIVE BUTTON =====
+    function interactionElusiveButton() {
+      GameState.cleanupFn = () => {};
+      GameState.currentInteraction = 'elusive_button';
+      const area = document.getElementById('interaction-area');
+      const title = document.getElementById('interaction-title');
+      title.textContent = 'SUBMIT REPORT';
+
+      area.replaceChildren();
+      area.style.position = 'relative';
+
+      const attemptsLabel = document.createElement('div');
+      attemptsLabel.className = 'int-counter';
+      attemptsLabel.style.fontSize = '11px';
+      attemptsLabel.style.position = 'absolute';
+      attemptsLabel.style.top = '8px';
+      attemptsLabel.textContent = 'ATTEMPTS REMAINING: 10';
+
+      const btn = document.createElement('button');
+      btn.className = 'int-btn';
+      btn.textContent = 'SUBMIT';
+      btn.style.position = 'absolute';
+      btn.style.left = '50%';
+      btn.style.top = '50%';
+      btn.style.transform = 'translate(-50%, -50%)';
+
+      area.appendChild(attemptsLabel);
+      area.appendChild(btn);
+
+      let teleports = 0;
+      let frozen = false;
+      let timeoutId = null;
+
+      function teleport() {
+        if (frozen) return;
+        const areaRect = area.getBoundingClientRect();
+        let newLeft, newTop, dx, dy, attempts = 0;
+        do {
+          newLeft = 80 + Math.random() * (areaRect.width - 160);
+          newTop = 40 + Math.random() * (areaRect.height - 80);
+          const curLeft = parseFloat(btn.style.left) || areaRect.width / 2;
+          const curTop = parseFloat(btn.style.top) || areaRect.height / 2;
+          dx = newLeft - curLeft;
+          dy = newTop - curTop;
+          attempts++;
+        } while (Math.sqrt(dx*dx + dy*dy) < 100 && attempts < 20);
+
+        btn.style.left = newLeft + 'px';
+        btn.style.top = newTop + 'px';
+        btn.style.transform = 'none';
+        teleports++;
+        attemptsLabel.textContent = 'ATTEMPTS REMAINING: ' + Math.max(0, 10 - teleports);
+        if (teleports >= 10) freeze();
+      }
+
+      function freeze() {
+        if (frozen) return;
+        frozen = true;
+        if (timeoutId) clearTimeout(timeoutId);
+        btn.removeEventListener('mouseover', teleport);
+        btn.textContent = 'OK FINE, CLICK ME';
+        btn.style.borderColor = 'var(--beige)';
+        btn.addEventListener('click', onFrozenClick);
+      }
+
+      function onFrozenClick() {
+        playSound('click');
+        btn.removeEventListener('click', onFrozenClick);
+        completeInteraction(-10, 'REPORT SUCCESSFULLY AVOIDED');
+      }
+
+      btn.addEventListener('mouseover', teleport);
+      timeoutId = setTimeout(freeze, 15000);
+
+      GameState.cleanupFn = () => {
+        btn.removeEventListener('mouseover', teleport);
+        btn.removeEventListener('click', onFrozenClick);
+        if (timeoutId) clearTimeout(timeoutId);
+        area.replaceChildren();
+        title.textContent = '';
+      };
+    }
+
+    INTERACTIONS.push({ id: 'elusive_button', fn: interactionElusiveButton });
+
     // ===== SOUND =====
     let _audioCtx = null;
     function getAudioCtx() {
