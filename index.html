@@ -834,6 +834,113 @@
 
     INTERACTIONS.push({ id: 'elusive_button', fn: interactionElusiveButton });
 
+    // ===== INT-03: MEETING ESCAPE =====
+    function interactionMeetingEscape() {
+      GameState.cleanupFn = () => {};
+      GameState.currentInteraction = 'meeting_escape';
+      const area = document.getElementById('interaction-area');
+      const title = document.getElementById('interaction-title');
+      title.textContent = 'ENEMY ENCOUNTERED';
+      playSound('meeting');
+
+      area.replaceChildren();
+      area.style.position = 'relative';
+
+      const enemy = document.createElement('div');
+      enemy.className = 'meeting-enemy';
+      const label = document.createElement('div');
+      label.className = 'meeting-label';
+      label.textContent = 'MEETING';
+      enemy.appendChild(label);
+
+      const barContainer = document.createElement('div');
+      barContainer.className = 'survive-bar-container';
+      const barFill = document.createElement('div');
+      barFill.className = 'survive-bar-fill';
+      barContainer.appendChild(barFill);
+
+      const instruction = document.createElement('div');
+      instruction.style.cssText = 'font-family:"Press Start 2P",monospace;font-size:9px;color:var(--beige);position:absolute;top:8px;';
+      instruction.textContent = 'SURVIVE 10 SECONDS';
+
+      area.appendChild(enemy);
+      area.appendChild(barContainer);
+      area.appendChild(instruction);
+
+      let enemyX = area.getBoundingClientRect().width / 2;
+      let enemyY = 60;
+      let mouseX = enemyX + 200;
+      let mouseY = enemyY;
+      let surviveTime = 0;
+      let contacts = 0;
+      let speed = 1.5;
+      let rafId = null;
+      let done = false;
+
+      function onMouseMove(e) {
+        const rect = area.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+      }
+
+      area.addEventListener('mousemove', onMouseMove);
+
+      function frame() {
+        if (done) return;
+        const dx = mouseX - enemyX;
+        const dy = mouseY - enemyY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist > 1) {
+          const rect = area.getBoundingClientRect();
+          enemyX += (dx / dist) * speed;
+          enemyY += (dy / dist) * speed;
+          enemyX = Math.max(0, Math.min(rect.width - 32, enemyX));
+          enemyY = Math.max(0, Math.min(rect.height - 60, enemyY));
+        }
+        enemy.style.left = enemyX + 'px';
+        enemy.style.top = enemyY + 'px';
+        rafId = requestAnimationFrame(frame);
+      }
+
+      const surviveInterval = setInterval(() => {
+        if (done) return;
+        const ecx = enemyX + 16;
+        const ecy = enemyY + 16;
+        const contactDist = Math.sqrt((mouseX - ecx) ** 2 + (mouseY - ecy) ** 2);
+        if (contactDist < 40) {
+          surviveTime = 0;
+          contacts++;
+          if (contacts >= 3) speed = 2.5;
+          barFill.style.background = '#cc0000';
+          setTimeout(() => { if (!done) barFill.style.background = '#00cc00'; }, 200);
+        } else {
+          surviveTime += 0.1;
+        }
+        barFill.style.width = Math.min(100, (surviveTime / 10) * 100) + '%';
+        if (surviveTime >= 10) {
+          done = true;
+          clearInterval(surviveInterval);
+          cancelAnimationFrame(rafId);
+          area.removeEventListener('mousemove', onMouseMove);
+          showAchievement('MEETING_SURVIVOR');
+          completeInteraction(-12, 'YOU SURVIVED: MEETING THAT COULD HAVE BEEN AN EMAIL');
+        }
+      }, 100);
+
+      rafId = requestAnimationFrame(frame);
+
+      GameState.cleanupFn = () => {
+        done = true;
+        cancelAnimationFrame(rafId);
+        clearInterval(surviveInterval);
+        area.removeEventListener('mousemove', onMouseMove);
+        area.replaceChildren();
+        title.textContent = '';
+      };
+    }
+
+    INTERACTIONS.push({ id: 'meeting_escape', fn: interactionMeetingEscape });
+
     // ===== SOUND =====
     let _audioCtx = null;
     function getAudioCtx() {
