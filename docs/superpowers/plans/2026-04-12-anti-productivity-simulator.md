@@ -1902,7 +1902,7 @@ function interactionTaskLabyrinth() {
     { walls: [[0,1],[1,1],[1,3],[2,0],[2,3],[3,2],[3,3],[4,2]], exit: [4,4] },
     { walls: [[0,2],[0,3],[1,0],[1,2],[2,1],[2,4],[3,0],[3,3]], exit: [4,0] },
     { walls: [[0,3],[1,1],[1,4],[2,2],[2,3],[3,1],[4,1],[4,3]], exit: [0,4] }, // fixed: removed wall at exit cell [0,4], moved to [0,3]
-    { walls: [[0,1],[1,3],[2,0],[2,4],[3,2],[3,4],[4,0],[4,2]], exit: [2,4] }
+    { walls: [[0,1],[1,3],[2,0],[3,2],[3,4],[4,0],[4,2],[4,4]], exit: [2,4] } // fixed: removed wall at [2,4] (exit cell), moved to [4,4]
   ];
 
   let mazeIndex = 0;
