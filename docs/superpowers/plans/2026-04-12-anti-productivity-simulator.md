@@ -1012,12 +1012,11 @@ function interactionClickQuest() {
 }
 ```
 
-- [ ] **Step 3: Register in INTERACTIONS array**
+- [ ] **Step 3: Push to INTERACTIONS array (already declared in Task 5)**
 
 ```js
-const INTERACTIONS = [
-  { id: 'click_quest', fn: interactionClickQuest },
-];
+// NOTE: INTERACTIONS was declared as [] in Task 5. Use push() — do NOT re-declare.
+INTERACTIONS.push({ id: 'click_quest', fn: interactionClickQuest });
 ```
 
 - [ ] **Step 4: Open in browser, play through INT-01**
@@ -1284,13 +1283,9 @@ function interactionMeetingEscape() {
       if (contacts >= 3) speed = 2.5;
       barFill.style.background = '#cc0000';
       setTimeout(() => { barFill.style.background = '#00cc00'; }, 200);
-    } else {
-      surviveTime += (timestamp - (lastTime - (timestamp - lastTime))) / 1000;
-      // Simpler: increment per frame
     }
-
-    // Simpler survive timer: count frames without contact
-    barFill.style.width = Math.min(100, (surviveTime / 10) * 100) + '%';
+    // NOTE: surviveTime is NOT incremented here — it is incremented exclusively
+    // in the surviveInterval below to avoid double-counting.
 
     rafId = requestAnimationFrame(frame);
   }
@@ -1692,28 +1687,29 @@ function interactionProgressBar() {
       }
 
       document.addEventListener('mousemove', onMouseMove);
-
-      // Override cleanupFn to also remove this listener
-      const prevCleanup = GameState.cleanupFn;
+      // Update cleanupFn immediately so teardown during attempt 4 removes mousemove listener.
       GameState.cleanupFn = () => {
+        done = true;
         document.removeEventListener('mousemove', onMouseMove);
         if (stillnessTimeout) clearTimeout(stillnessTimeout);
         if (fillInterval) clearInterval(fillInterval);
-        area.innerHTML = '';
+        area.replaceChildren();
         title.textContent = '';
       };
     }
   }
 
-  startAttempt();
-
+  // Initial cleanupFn for attempts 1-3 (no mousemove listener yet).
+  // startAttempt() for attempt 4 will overwrite this.
   GameState.cleanupFn = () => {
     done = true;
     if (fillInterval) clearInterval(fillInterval);
     if (stillnessTimeout) clearTimeout(stillnessTimeout);
-    area.innerHTML = '';
+    area.replaceChildren();
     title.textContent = '';
   };
+
+  startAttempt();
 }
 ```
 
@@ -1905,7 +1901,7 @@ function interactionTaskLabyrinth() {
   const mazes = [
     { walls: [[0,1],[1,1],[1,3],[2,0],[2,3],[3,2],[3,3],[4,2]], exit: [4,4] },
     { walls: [[0,2],[0,3],[1,0],[1,2],[2,1],[2,4],[3,0],[3,3]], exit: [4,0] },
-    { walls: [[0,4],[1,1],[1,4],[2,2],[2,3],[3,1],[4,1],[4,3]], exit: [0,4] },
+    { walls: [[0,3],[1,1],[1,4],[2,2],[2,3],[3,1],[4,1],[4,3]], exit: [0,4] }, // fixed: removed wall at exit cell [0,4], moved to [0,3]
     { walls: [[0,1],[1,3],[2,0],[2,4],[3,2],[3,4],[4,0],[4,2]], exit: [2,4] }
   ];
 
