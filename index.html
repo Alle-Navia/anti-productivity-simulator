@@ -390,6 +390,81 @@
     }
     .rupia.gold { background: #c8a200; box-shadow: 2px 2px 0 #000; }
     .rupia.green { background: #00a020; box-shadow: 2px 2px 0 #000; }
+
+    /* ===== INT-06 PROGRESS BAR ===== */
+    .upload-bar-container {
+      width: 280px;
+      height: 22px;
+      border: 3px solid var(--gold);
+      background: #000;
+      margin: 8px 0;
+    }
+    .upload-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--gold);
+    }
+
+    /* ===== MAZE ===== */
+    .maze-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 40px);
+      grid-template-rows: repeat(5, 40px);
+      gap: 2px;
+      background: #000;
+      border: 3px solid var(--gold);
+    }
+    .maze-cell {
+      width: 40px; height: 40px;
+      background: var(--green-dark);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .maze-cell.wall { background: #0a2a0a; }
+    .maze-cell.exit-cell { background: #1a1a5a; }
+    .maze-player {
+      width: 24px; height: 24px;
+      background: #00cc00;
+      border: 2px solid #00ff00;
+      position: absolute;
+      pointer-events: none;
+    }
+
+    /* ===== ACHIEVEMENT OVERLAY ===== */
+    #achievement-overlay {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .achievement-popup {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      background: var(--black);
+      border: 4px solid var(--gold);
+      box-shadow: 0 0 0 8px #000, 0 0 0 12px var(--gold);
+      padding: 20px 32px;
+      font-family: 'Press Start 2P', monospace;
+    }
+    .chest-container { position: relative; width: 40px; height: 40px; }
+    .chest-body { position: absolute; bottom: 0; left: 0; width: 40px; height: 22px; background: #8b4513; border: 3px solid var(--gold); }
+    .chest-lid { position: absolute; top: 0; left: 0; width: 40px; height: 18px; background: #a0522d; border: 3px solid var(--gold); transform-origin: bottom center; transform: rotateX(0deg); transition: transform 0.4s ease-out; }
+    .chest-lid.open { transform: rotateX(-60deg); }
+    .chest-star { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: 20px; opacity: 0; }
+    @keyframes star-rise {
+      0%   { opacity: 0; transform: translateX(-50%) translateY(0); }
+      30%  { opacity: 1; }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-50px); }
+    }
+    .chest-star.rising { animation: star-rise 1.2s ease-out forwards; }
+    .achievement-label { font-size: 8px; color: #888; }
+    .achievement-name { font-size: 10px; color: var(--gold); text-align: center; }
+
+    body { cursor: default; }
+    #screen-game { cursor: crosshair; }
   </style>
 </head>
 <body>
@@ -661,7 +736,7 @@
       pick.fn();
     }
 
-    // Stubs filled in later tasks
+    // Stubs — replaced below after all interactions are defined
     function checkAchievements() {}
     function showAchievement(id) {}
 
@@ -1151,6 +1226,384 @@
           });
           break;
       }
+    }
+
+    // ===== INT-06: PROGRESS BAR =====
+    function interactionProgressBar() {
+      GameState.currentInteraction = 'progress_bar';
+      const area = document.getElementById('interaction-area');
+      const title = document.getElementById('interaction-title');
+      title.textContent = 'UPLOADING TPS REPORT';
+
+      area.replaceChildren();
+
+      const barLabel = document.createElement('div');
+      barLabel.style.cssText = 'font-family:"Press Start 2P",monospace;font-size:9px;color:var(--beige);margin-bottom:8px;';
+      barLabel.textContent = 'ATTEMPT 1 / 4';
+
+      const barContainer = document.createElement('div');
+      barContainer.className = 'upload-bar-container';
+      const barFill = document.createElement('div');
+      barFill.className = 'upload-bar-fill';
+      barContainer.appendChild(barFill);
+
+      const statusText = document.createElement('div');
+      statusText.style.cssText = 'font-family:"Press Start 2P",monospace;font-size:8px;color:var(--red-dark);margin-top:8px;min-height:20px;';
+
+      const tooltip = document.createElement('div');
+      tooltip.style.cssText = 'font-family:"Press Start 2P",monospace;font-size:8px;color:var(--gold);margin-top:12px;display:none;';
+      tooltip.textContent = 'DO NOT MOVE THE MOUSE';
+
+      area.appendChild(barLabel);
+      area.appendChild(barContainer);
+      area.appendChild(statusText);
+      area.appendChild(tooltip);
+
+      let attempt = 0;
+      let progress = 0;
+      let done = false;
+      let fillInterval = null;
+      let stillnessTimeout = null;
+      let mouseMoveListener = null;
+
+      function startAttempt() {
+        if (done) return;
+        attempt++;
+        progress = 0;
+        barFill.style.width = '0%';
+        barLabel.textContent = 'ATTEMPT ' + attempt + ' / 4';
+        statusText.textContent = '';
+
+        if (attempt <= 3) {
+          fillInterval = setInterval(() => {
+            if (done) return;
+            progress += 2.5;
+            if (progress >= 99) {
+              progress = 99;
+              barFill.style.width = '99%';
+              clearInterval(fillInterval);
+              fillInterval = null;
+              statusText.textContent = 'CONNECTION LOST';
+              setTimeout(() => { if (!done) startAttempt(); }, 1000);
+            } else {
+              barFill.style.width = progress + '%';
+            }
+          }, 100);
+        } else {
+          tooltip.style.display = 'block';
+          let mouseStill = false;
+
+          function onMouseMove() {
+            progress = 0;
+            barFill.style.width = '0%';
+            mouseStill = false;
+            if (fillInterval) { clearInterval(fillInterval); fillInterval = null; }
+            if (stillnessTimeout) clearTimeout(stillnessTimeout);
+            stillnessTimeout = setTimeout(() => {
+              if (done) return;
+              mouseStill = true;
+              startFilling();
+            }, 500);
+          }
+
+          function startFilling() {
+            if (fillInterval) return;
+            fillInterval = setInterval(() => {
+              if (!mouseStill || done) return;
+              progress += 1;
+              barFill.style.width = progress + '%';
+              if (progress >= 100) {
+                clearInterval(fillInterval);
+                fillInterval = null;
+                document.removeEventListener('mousemove', onMouseMove);
+                done = true;
+                completeInteraction(-9, "SCHRODINGER'S UPLOAD: COMPLETE");
+              }
+            }, 100);
+          }
+
+          mouseMoveListener = onMouseMove;
+          document.addEventListener('mousemove', onMouseMove);
+
+          GameState.cleanupFn = () => {
+            done = true;
+            if (mouseMoveListener) document.removeEventListener('mousemove', mouseMoveListener);
+            if (stillnessTimeout) clearTimeout(stillnessTimeout);
+            if (fillInterval) clearInterval(fillInterval);
+            area.replaceChildren();
+            title.textContent = '';
+          };
+        }
+      }
+
+      GameState.cleanupFn = () => {
+        done = true;
+        if (fillInterval) clearInterval(fillInterval);
+        if (stillnessTimeout) clearTimeout(stillnessTimeout);
+        area.replaceChildren();
+        title.textContent = '';
+      };
+
+      startAttempt();
+    }
+
+    INTERACTIONS.push({ id: 'progress_bar', fn: interactionProgressBar });
+
+    // ===== INT-07: INBOX ZERO =====
+    function interactionInboxZero() {
+      GameState.currentInteraction = 'inbox_zero';
+      const area = document.getElementById('interaction-area');
+      const title = document.getElementById('interaction-title');
+      title.textContent = 'INBOX';
+
+      area.replaceChildren();
+      area.style.position = 'relative';
+
+      const counterEl = document.createElement('div');
+      counterEl.style.cssText = 'font-family:"Press Start 2P",monospace;font-size:9px;color:var(--gold);position:absolute;top:4px;left:50%;transform:translateX(-50%);white-space:nowrap;';
+      counterEl.textContent = 'DELETED: 0';
+      area.appendChild(counterEl);
+
+      let totalDeleted = 0;
+      let visibleEmails = [];
+      let spawnQueue = 0;
+      let done = false;
+      let dequeueInterval = null;
+      let forceTimeout = null;
+
+      function createEmail() {
+        if (done || visibleEmails.length >= 8) { spawnQueue++; return; }
+        const email = document.createElement('div');
+        email.style.cssText = 'position:absolute;font-size:22px;cursor:pointer;user-select:none;left:' + (10 + Math.random() * 75) + '%;top:' + (20 + Math.random() * 55) + '%;transform:translate(-50%,-50%);';
+        email.textContent = '\uD83D\uDCE7';
+        area.appendChild(email);
+        visibleEmails.push(email);
+
+        email.addEventListener('click', () => {
+          if (done || !area.contains(email)) return;
+          playSound('click');
+          area.removeChild(email);
+          visibleEmails = visibleEmails.filter(e => e !== email);
+          spawnQueue += 3;
+          totalDeleted++;
+          counterEl.textContent = 'DELETED: ' + totalDeleted;
+          if (totalDeleted === 20 && !done) showAchievement('INBOX_HERO');
+        });
+      }
+
+      for (let i = 0; i < 5; i++) createEmail();
+
+      dequeueInterval = setInterval(() => {
+        if (done) return;
+        while (spawnQueue > 0 && visibleEmails.length < 8) {
+          spawnQueue--;
+          createEmail();
+        }
+      }, 300);
+
+      forceTimeout = setTimeout(() => {
+        if (!done) { done = true; completeInteraction(-11, 'INBOX: INFINITY'); }
+      }, 25000);
+
+      GameState.cleanupFn = () => {
+        done = true;
+        clearInterval(dequeueInterval);
+        clearTimeout(forceTimeout);
+        area.replaceChildren();
+        title.textContent = '';
+        visibleEmails = [];
+      };
+    }
+
+    INTERACTIONS.push({ id: 'inbox_zero', fn: interactionInboxZero });
+
+    // ===== INT-08: TASK LABYRINTH =====
+    function interactionTaskLabyrinth() {
+      GameState.currentInteraction = 'task_labyrinth';
+      const area = document.getElementById('interaction-area');
+      const title = document.getElementById('interaction-title');
+      title.textContent = 'NAVIGATE REQUIREMENTS';
+
+      area.replaceChildren();
+
+      const mazes = [
+        { walls: [[0,1],[1,1],[1,3],[2,0],[2,3],[3,2],[3,3],[4,2]], exit: [4,4] },
+        { walls: [[0,2],[0,3],[1,0],[1,2],[2,1],[2,4],[3,0],[3,3]], exit: [4,0] },
+        { walls: [[0,3],[1,1],[1,4],[2,2],[2,3],[3,1],[4,1],[4,3]], exit: [0,4] },
+        { walls: [[0,1],[1,3],[2,0],[3,2],[3,4],[4,0],[4,2],[4,4]], exit: [2,4] }
+      ];
+
+      let mazeIndex = 0;
+      let exitCount = 0;
+      let playerR = 0, playerC = 0;
+      let done = false;
+      let msgTimeout = null;
+
+      function isWall(r, c, maze) {
+        return maze.walls.some(w => w[0] === r && w[1] === c);
+      }
+
+      function renderMaze() {
+        area.replaceChildren();
+        const maze = mazes[mazeIndex % 4];
+
+        const progressEl = document.createElement('div');
+        progressEl.style.cssText = 'font-family:"Press Start 2P",monospace;font-size:8px;color:var(--beige);margin-bottom:8px;';
+        progressEl.textContent = 'WRONG EXITS FOUND: ' + exitCount + ' / 4';
+        area.appendChild(progressEl);
+
+        const grid = document.createElement('div');
+        grid.className = 'maze-grid';
+
+        for (let r = 0; r < 5; r++) {
+          for (let c = 0; c < 5; c++) {
+            const cell = document.createElement('div');
+            const isW = isWall(r, c, maze);
+            const isExit = maze.exit[0] === r && maze.exit[1] === c;
+            cell.className = 'maze-cell' + (isW ? ' wall' : '') + (isExit ? ' exit-cell' : '');
+            if (isExit) cell.textContent = '\uD83D\uDEAA';
+            if (r === playerR && c === playerC) {
+              const player = document.createElement('div');
+              player.className = 'maze-player';
+              cell.appendChild(player);
+            }
+            grid.appendChild(cell);
+          }
+        }
+
+        const hint = document.createElement('div');
+        hint.style.cssText = 'font-family:"Press Start 2P",monospace;font-size:7px;color:#888;margin-top:8px;';
+        hint.textContent = 'WASD / ARROWS TO MOVE';
+        area.appendChild(grid);
+        area.appendChild(hint);
+      }
+
+      function onKey(e) {
+        if (done) return;
+        const moves = { ArrowUp:[-1,0], ArrowDown:[1,0], ArrowLeft:[0,-1], ArrowRight:[0,1], w:[-1,0], s:[1,0], a:[0,-1], d:[0,1] };
+        const move = moves[e.key];
+        if (!move) return;
+        e.preventDefault();
+
+        const maze = mazes[mazeIndex % 4];
+        const nr = playerR + move[0];
+        const nc = playerC + move[1];
+        if (nr < 0 || nr > 4 || nc < 0 || nc > 4) return;
+        if (isWall(nr, nc, maze)) return;
+
+        playerR = nr;
+        playerC = nc;
+        renderMaze();
+
+        if (maze.exit[0] === playerR && maze.exit[1] === playerC) {
+          exitCount++;
+          if (exitCount >= 4) {
+            done = true;
+            document.removeEventListener('keydown', onKey);
+            completeInteraction(-13, 'REQUIREMENTS UPDATED. START OVER.');
+            return;
+          }
+          const msgEl = document.createElement('div');
+          msgEl.style.cssText = 'position:absolute;top:0;left:0;width:100%;background:var(--red-dark);font-family:"Press Start 2P",monospace;font-size:8px;color:var(--beige);padding:8px;text-align:center;z-index:20;';
+          msgEl.textContent = 'WRONG EXIT - SEE ATTACHED: requirements_FINAL_v3.docx';
+          area.appendChild(msgEl);
+          mazeIndex++;
+          playerR = 0; playerC = 0;
+          msgTimeout = setTimeout(() => { if (!done) renderMaze(); }, 1000);
+        }
+      }
+
+      document.addEventListener('keydown', onKey);
+      renderMaze();
+
+      GameState.cleanupFn = () => {
+        done = true;
+        document.removeEventListener('keydown', onKey);
+        if (msgTimeout) clearTimeout(msgTimeout);
+        area.replaceChildren();
+        title.textContent = '';
+      };
+    }
+
+    INTERACTIONS.push({ id: 'task_labyrinth', fn: interactionTaskLabyrinth });
+
+    // ===== ACHIEVEMENTS SYSTEM =====
+    const ACHIEVEMENT_DEFS = {
+      CLICKED_WITHOUT_PURPOSE: 'CLICKED WITHOUT PURPOSE',
+      MEETING_SURVIVOR: 'MEETING SURVIVOR',
+      PROFESSIONAL_PROCRASTINATOR: 'PROFESSIONAL PROCRASTINATOR',
+      THE_FLOOR_IS_DEADLINES: 'THE FLOOR IS DEADLINES',
+      INBOX_HERO: 'INBOX HERO',
+      SPEEDRUNNER: 'SPEEDRUNNER'
+    };
+
+    // Replace the stubs defined above
+    checkAchievements = function() {
+      const gs = GameState;
+      if (!gs.achievements.has('PROFESSIONAL_PROCRASTINATOR') && gs.interactionCount >= 3)
+        showAchievement('PROFESSIONAL_PROCRASTINATOR');
+      if (!gs.achievements.has('THE_FLOOR_IS_DEADLINES') && gs.focusPoints < 50 && gs.focusPoints > 0)
+        showAchievement('THE_FLOOR_IS_DEADLINES');
+      if (!gs.achievements.has('SPEEDRUNNER') && gs.interactionCount >= 5 && gs.timeWasted < 180)
+        showAchievement('SPEEDRUNNER');
+    };
+
+    let _achievementQueue = [];
+    let _achievementShowing = false;
+
+    showAchievement = function(id) {
+      if (GameState.achievements.has(id)) return;
+      GameState.achievements.add(id);
+      _achievementQueue.push(id);
+      if (!_achievementShowing) _processAchievementQueue();
+    };
+
+    function _processAchievementQueue() {
+      if (_achievementQueue.length === 0) { _achievementShowing = false; return; }
+      _achievementShowing = true;
+      const id = _achievementQueue.shift();
+      const name = ACHIEVEMENT_DEFS[id] || id;
+
+      const overlay = document.getElementById('achievement-overlay');
+      overlay.style.display = 'flex';
+      overlay.replaceChildren();
+
+      const popup = document.createElement('div');
+      popup.className = 'achievement-popup';
+
+      const chestContainer = document.createElement('div');
+      chestContainer.className = 'chest-container';
+      const body = document.createElement('div');
+      body.className = 'chest-body';
+      const lid = document.createElement('div');
+      lid.className = 'chest-lid';
+      const star = document.createElement('div');
+      star.className = 'chest-star';
+      star.textContent = '\u2605';
+      chestContainer.appendChild(body);
+      chestContainer.appendChild(lid);
+      chestContainer.appendChild(star);
+
+      const label = document.createElement('div');
+      label.className = 'achievement-label';
+      label.textContent = 'YOU GOT:';
+      const nameEl = document.createElement('div');
+      nameEl.className = 'achievement-name';
+      nameEl.textContent = name;
+
+      popup.appendChild(chestContainer);
+      popup.appendChild(label);
+      popup.appendChild(nameEl);
+      overlay.appendChild(popup);
+
+      playSound('achievement');
+      setTimeout(() => { lid.classList.add('open'); }, 50);
+      setTimeout(() => { star.classList.add('rising'); }, 200);
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        overlay.replaceChildren();
+        setTimeout(_processAchievementQueue, 300);
+      }, 3000);
     }
   </script>
 </body>
