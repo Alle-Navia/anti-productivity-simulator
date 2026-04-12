@@ -765,11 +765,6 @@
 
     // ===== INT-01: CLICK QUEST =====
     function interactionClickQuest() {
-      GameState.cleanupFn = () => {
-        btn.removeEventListener('click', onClick);
-        area.replaceChildren();
-        title.textContent = '';
-      };
       GameState.currentInteraction = 'click_quest';
       const area = document.getElementById('interaction-area');
       const title = document.getElementById('interaction-title');
@@ -826,7 +821,6 @@
 
     // ===== INT-02: ELUSIVE BUTTON =====
     function interactionElusiveButton() {
-      GameState.cleanupFn = () => {};
       GameState.currentInteraction = 'elusive_button';
       const area = document.getElementById('interaction-area');
       const title = document.getElementById('interaction-title');
@@ -911,7 +905,6 @@
 
     // ===== INT-03: MEETING ESCAPE =====
     function interactionMeetingEscape() {
-      GameState.cleanupFn = () => {};
       GameState.currentInteraction = 'meeting_escape';
       const area = document.getElementById('interaction-area');
       const title = document.getElementById('interaction-title');
@@ -1018,7 +1011,6 @@
 
     // ===== INT-04: RUPIA RAIN =====
     function interactionRupiaRain() {
-      GameState.cleanupFn = () => {};
       GameState.currentInteraction = 'rupia_rain';
       const area = document.getElementById('interaction-area');
       const title = document.getElementById('interaction-title');
@@ -1106,7 +1098,6 @@
 
     // ===== INT-05: ETERNAL STANDUP =====
     function interactionEternalStandup() {
-      GameState.cleanupFn = () => {};
       GameState.currentInteraction = 'eternal_standup';
       GameState.passiveDrainPaused = true;
       const area = document.getElementById('interaction-area');
@@ -1338,6 +1329,7 @@
 
       GameState.cleanupFn = () => {
         done = true;
+        if (mouseMoveListener) document.removeEventListener('mousemove', mouseMoveListener);
         if (fillInterval) clearInterval(fillInterval);
         if (stillnessTimeout) clearTimeout(stillnessTimeout);
         area.replaceChildren();
