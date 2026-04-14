@@ -17,16 +17,16 @@
       --corporate-gray: #f5f5f5;
       --corporate-blue: #2563eb;
 
-      /* Corporate redesign vars */
-      --corp-bg: #fafafa;
-      --corp-surface: #ffffff;
-      --corp-blue: #2563eb;
-      --corp-blue-light: #eff6ff;
-      --corp-blue-dark: #1d4ed8;
-      --corp-text: #0f172a;
-      --corp-text-muted: #64748b;
-      --corp-border: #e2e8f0;
-      --corp-accent: #7c3aed;
+      /* Corporate redesign vars — dark theme */
+      --corp-bg: #080808;
+      --corp-surface: #111111;
+      --corp-blue: #3b82f6;
+      --corp-blue-light: #1e3a5f;
+      --corp-blue-dark: #2563eb;
+      --corp-text: #f0f0f0;
+      --corp-text-muted: #888888;
+      --corp-border: #222222;
+      --corp-accent: #a855f7;
       --corp-font-display: 'Inter', 'Segoe UI', system-ui, sans-serif;
     }
 
@@ -57,23 +57,22 @@
       background: var(--corp-bg);
       flex-direction: column;
       font-family: var(--corp-font-display);
-      overflow-y: auto;
+      overflow: hidden;
       position: relative;
+      height: 100vh;
     }
 
     /* Navbar */
     .corp-navbar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
       height: 60px;
-      background: rgba(255,255,255,0.9);
+      background: rgba(8,8,8,0.95);
       backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--corp-border);
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       padding: 0 40px;
-      z-index: 50;
+      flex-shrink: 0;
     }
     .corp-nav-logo {
       display: flex;
@@ -139,7 +138,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 120px 40px 60px;
+      padding: 20px 40px 16px;
       text-align: center;
       max-width: 800px;
       margin: 0 auto;
@@ -152,16 +151,16 @@
       background: var(--corp-blue-light);
       color: var(--corp-blue);
       border-radius: 100px;
-      padding: 6px 14px;
-      font-size: 12px;
+      padding: 5px 12px;
+      font-size: 11px;
       font-weight: 500;
-      margin-bottom: 28px;
+      margin-bottom: 16px;
     }
     .corp-headline {
-      font-size: clamp(40px, 6vw, 72px);
+      font-size: clamp(32px, 5vw, 58px);
       font-weight: 800;
       line-height: 1.1;
-      margin-bottom: 20px;
+      margin-bottom: 14px;
       color: var(--corp-text);
     }
     .corp-headline-gradient {
@@ -171,17 +170,17 @@
       background-clip: text;
     }
     .corp-subtext {
-      font-size: 18px;
+      font-size: 16px;
       color: var(--corp-text-muted);
       max-width: 520px;
       line-height: 1.6;
-      margin-bottom: 36px;
+      margin-bottom: 24px;
     }
     .corp-cta-row {
       display: flex;
       gap: 12px;
       align-items: center;
-      margin-bottom: 40px;
+      margin-bottom: 0;
     }
     .corp-btn-primary {
       background: var(--corp-blue);
@@ -257,19 +256,23 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
-      padding: 0 40px 60px;
+      padding: 0 40px 24px;
       max-width: 900px;
       margin: 0 auto;
       width: 100%;
+      flex-shrink: 0;
     }
     .corp-card {
       background: var(--corp-surface);
       border: 1px solid var(--corp-border);
       border-radius: 12px;
       padding: 20px;
-      transition: box-shadow 0.2s;
+      transition: box-shadow 0.2s, transform 0.2s;
     }
-    .corp-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+    .corp-card:hover {
+      box-shadow: 0 8px 24px rgba(59,130,246,0.15);
+      transform: translateY(-2px);
+    }
     .corp-card-icon { font-size: 16px; margin-bottom: 8px; }
     .corp-card-title {
       font-size: 14px;
@@ -278,7 +281,7 @@
       margin-bottom: 6px;
     }
     .corp-card-desc {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--corp-text-muted);
       line-height: 1.5;
     }
@@ -720,55 +723,83 @@
     /* ===== INT-09 COFFEE BREAK ===== */
     .coffee-cup {
       position: relative;
-      width: 60px;
-      margin: 8px auto;
+      width: 80px;
+      margin: 16px auto;
+    }
+    /* Steam container above cup */
+    .coffee-steam-wrap {
+      position: relative;
+      height: 32px;
+      width: 80px;
     }
     .coffee-body {
-      width: 60px; height: 50px;
-      background: #4a2800;
+      width: 80px; height: 64px;
+      background: #2a1500;
       border: 3px solid var(--gold);
-      border-top: none;
+      border-top: 3px solid var(--gold);
+      border-radius: 0 0 16px 16px;
       position: relative;
       overflow: hidden;
+    }
+    /* Rim at the top */
+    .coffee-body::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -4px; right: -4px;
+      height: 8px;
+      background: #4a2800;
+      border: 3px solid var(--gold);
+      border-radius: 4px 4px 0 0;
     }
     .coffee-liquid {
       position: absolute;
       bottom: 0; left: 0; right: 0;
-      height: 70%;
-      background: #6b3a00;
+      height: 72%;
+      background: linear-gradient(180deg, #7a4500 0%, #4a2800 100%);
+      border-radius: 0 0 13px 13px;
       transition: height 0.8s ease;
+    }
+    /* Coffee surface shine */
+    .coffee-liquid::after {
+      content: '';
+      position: absolute;
+      top: 4px; left: 8px; right: 8px;
+      height: 4px;
+      background: rgba(255,200,100,0.2);
+      border-radius: 2px;
     }
     .coffee-handle {
       position: absolute;
-      right: -18px; top: 8px;
-      width: 14px; height: 24px;
-      border: 3px solid var(--gold);
+      right: -20px; top: 12px;
+      width: 18px; height: 30px;
+      border: 4px solid var(--gold);
       border-left: none;
-      border-radius: 0 8px 8px 0;
+      border-radius: 0 12px 12px 0;
+      background: transparent;
     }
     .coffee-saucer {
-      width: 72px; height: 8px;
-      background: #4a2800;
+      width: 96px; height: 10px;
+      background: #3a1e00;
       border: 3px solid var(--gold);
-      margin: 0 auto;
-      margin-left: -6px;
+      border-radius: 0 0 8px 8px;
+      margin-left: -8px;
     }
     @keyframes steam-rise {
       0%   { opacity: 0; transform: translateY(0) scaleX(1); }
-      40%  { opacity: 0.8; }
-      100% { opacity: 0; transform: translateY(-30px) scaleX(1.4); }
+      30%  { opacity: 0.7; }
+      100% { opacity: 0; transform: translateY(-28px) scaleX(1.6); }
     }
     .steam {
       position: absolute;
-      bottom: 100%;
-      width: 6px; height: 20px;
+      bottom: 0;
+      width: 5px; height: 18px;
       border-radius: 3px;
-      background: rgba(200,200,200,0.5);
-      animation: steam-rise 1.2s ease-out infinite;
+      background: rgba(210,210,210,0.45);
+      animation: steam-rise 1.4s ease-out infinite;
     }
-    .steam:nth-child(1) { left: 12px; animation-delay: 0s; }
-    .steam:nth-child(2) { left: 28px; animation-delay: 0.4s; }
-    .steam:nth-child(3) { left: 42px; animation-delay: 0.8s; }
+    .steam:nth-child(1) { left: 14px; animation-delay: 0s; }
+    .steam:nth-child(2) { left: 36px; animation-delay: 0.45s; }
+    .steam:nth-child(3) { left: 56px; animation-delay: 0.9s; }
 
     /* ===== INT-10 DO NOT DISTURB ===== */
     .dnd-overlay {
@@ -813,16 +844,6 @@
         <div class="corp-nav-logo-name">Pro<span>Flow</span>&#8482;</div>
         <div class="corp-nav-logo-tag">AI-Powered Productivity Suite</div>
       </div>
-      <ul class="corp-nav-links">
-        <li><a href="#">Features</a></li>
-        <li><a href="#">Pricing</a></li>
-        <li><a href="#">Enterprise</a></li>
-        <li><a href="#">Blog</a></li>
-      </ul>
-      <div class="corp-nav-actions">
-        <button class="corp-nav-login">Log in</button>
-        <button class="corp-nav-cta">Start free trial →</button>
-      </div>
     </nav>
 
     <!-- Hero -->
@@ -838,22 +859,6 @@
           <div class="corp-spinner"></div>
           <span class="corp-btn-arrow">Start Working →</span>
         </button>
-        <button class="corp-btn-secondary">Watch demo &#9654;</button>
-      </div>
-      <div class="corp-trust">
-        <div class="corp-trust-label">Trusted by teams at</div>
-        <div class="corp-trust-logos">
-          <span class="corp-trust-logo">SYNCO</span>
-          <span class="corp-trust-logo">·</span>
-          <span class="corp-trust-logo">BLUEWAVE</span>
-          <span class="corp-trust-logo">·</span>
-          <span class="corp-trust-logo">NEXLIFY</span>
-          <span class="corp-trust-logo">·</span>
-          <span class="corp-trust-logo">QUANTEX</span>
-          <span class="corp-trust-logo">·</span>
-          <span class="corp-trust-logo">PEAKOPS</span>
-        </div>
-      </div>
     </div>
 
     <!-- Feature Cards -->
@@ -887,7 +892,10 @@
   <!-- Game Screen -->
   <div id="screen-game" class="screen">
     <div class="game-hud">
-      <div class="hud-title">ProFlow&#8482;</div>
+      <div style="display:flex;flex-direction:column;gap:2px;">
+        <div class="hud-title">ProFlow&#8482;</div>
+        <div id="hud-game-name" style="font-family:'Press Start 2P',monospace;font-size:6px;color:#888;"></div>
+      </div>
       <div class="hud-focus" id="hud-focus">
         <span>&#x1F9E0;</span><span>&#x1F9E0;</span><span>&#x1F9E0;</span><span>&#x1F9E0;</span><span>&#x1F9E0;</span>
       </div>
@@ -985,11 +993,11 @@
       container.replaceChildren();
 
       const lines = [
-        { text: 'ALTO.', delay: 300 },
-        { text: 'Tienes 5 minutos.', delay: 900 },
-        { text: 'Aqu\u00ed no hay KPIs.', delay: 1500 },
-        { text: 'Ni sprints.', delay: 2100 },
-        { text: 'Ni Jira.', delay: 2700 },
+        { text: 'ALTO.', delay: 500 },
+        { text: 'Tienes 5 minutos.', delay: 1800 },
+        { text: 'Aqu\u00ed no hay KPIs.', delay: 3200 },
+        { text: 'Ni sprints.', delay: 4400 },
+        { text: 'Ni Jira.', delay: 5600 },
       ];
 
       lines.forEach(({ text, delay }) => {
@@ -1005,7 +1013,7 @@
       btn.textContent = '[ ENTRAR ]';
       btn.style.marginTop = '20px';
       container.appendChild(btn);
-      setTimeout(() => btn.classList.add('visible'), 3500);
+      setTimeout(() => btn.classList.add('visible'), 7200);
 
       btn.addEventListener('click', () => showScreen('corporate'));
     }
@@ -1251,16 +1259,29 @@
     }
 
     const INTERACTIONS = [];
+    let _interactionQueue = [];
 
     function loadRandomInteraction() {
       if (GameState.screen !== 'game') return;
       if (INTERACTIONS.length === 0) return;
-      const available = INTERACTIONS.filter(i => i.id !== GameState.lastInteraction);
-      const pool = available.length > 0 ? available : INTERACTIONS;
-      const pick = pool[Math.floor(Math.random() * pool.length)];
+      // Refill queue (barajado) cuando se agota
+      if (_interactionQueue.length === 0) {
+        _interactionQueue = [...INTERACTIONS].sort(() => Math.random() - 0.5);
+      }
+      // Evitar repetir la última inmediatamente
+      if (_interactionQueue[0].id === GameState.lastInteraction && _interactionQueue.length > 1) {
+        _interactionQueue.push(_interactionQueue.shift());
+      }
+      const pick = _interactionQueue.shift();
       GameState.currentInteraction = pick.id;
       document.getElementById('interaction-area').replaceChildren();
       pick.fn();
+      // Actualizar nombre en HUD tras un tick (para que la fn ya setee el título)
+      setTimeout(() => {
+        const t = document.getElementById('interaction-title')?.textContent || '';
+        const n = document.getElementById('hud-game-name');
+        if (n) n.textContent = t;
+      }, 20);
     }
 
     // Stubs — replaced below after all interactions are defined
@@ -2079,17 +2100,20 @@
       const cupWrapper = document.createElement('div');
       cupWrapper.className = 'coffee-cup';
 
+      // Steam wrapper
+      const steamWrap = document.createElement('div');
+      steamWrap.className = 'coffee-steam-wrap';
+      for (let i = 0; i < 3; i++) {
+        const s = document.createElement('div');
+        s.className = 'steam';
+        steamWrap.appendChild(s);
+      }
+
       const body = document.createElement('div');
       body.className = 'coffee-body';
       const liquid = document.createElement('div');
       liquid.className = 'coffee-liquid';
       body.appendChild(liquid);
-      // steam
-      for (let i = 0; i < 3; i++) {
-        const s = document.createElement('div');
-        s.className = 'steam';
-        body.appendChild(s);
-      }
       const handle = document.createElement('div');
       handle.className = 'coffee-handle';
       body.appendChild(handle);
@@ -2097,6 +2121,7 @@
       const saucer = document.createElement('div');
       saucer.className = 'coffee-saucer';
 
+      cupWrapper.appendChild(steamWrap);
       cupWrapper.appendChild(body);
       cupWrapper.appendChild(saucer);
 
