@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Anti-Productivity Simulator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     /* ===== CSS VARIABLES ===== */
     :root {
@@ -16,6 +16,18 @@
       --black: #0a0a0a;
       --corporate-gray: #f5f5f5;
       --corporate-blue: #2563eb;
+
+      /* Corporate redesign vars */
+      --corp-bg: #fafafa;
+      --corp-surface: #ffffff;
+      --corp-blue: #2563eb;
+      --corp-blue-light: #eff6ff;
+      --corp-blue-dark: #1d4ed8;
+      --corp-text: #0f172a;
+      --corp-text-muted: #64748b;
+      --corp-border: #e2e8f0;
+      --corp-accent: #7c3aed;
+      --corp-font-display: 'Inter', 'Segoe UI', system-ui, sans-serif;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -42,54 +54,233 @@
 
     /* ===== CORPORATE SCREEN ===== */
     #screen-corporate {
-      background: var(--corporate-gray);
+      background: var(--corp-bg);
+      flex-direction: column;
+      font-family: var(--corp-font-display);
+      overflow-y: auto;
+      position: relative;
+    }
+
+    /* Navbar */
+    .corp-navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 60px;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--corp-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      z-index: 50;
+    }
+    .corp-nav-logo {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .corp-nav-logo-name {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--corp-text);
+      line-height: 1;
+    }
+    .corp-nav-logo-name span { color: var(--corp-blue); }
+    .corp-nav-logo-tag {
+      font-size: 10px;
+      color: var(--corp-text-muted);
+      font-weight: 400;
+    }
+    .corp-nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .corp-nav-links li a {
+      font-size: 14px;
+      color: var(--corp-text-muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .corp-nav-links li a:hover { color: var(--corp-text); }
+    .corp-nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .corp-nav-login {
+      font-size: 14px;
+      color: var(--corp-text);
+      text-decoration: none;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: var(--corp-font-display);
+    }
+    .corp-nav-cta {
+      background: var(--corp-blue);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: var(--corp-font-display);
+      transition: background 0.15s;
+    }
+    .corp-nav-cta:hover { background: var(--corp-blue-dark); }
+
+    /* Hero */
+    .corp-hero {
+      flex: 1;
+      display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding: 120px 40px 60px;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
     }
+    .corp-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--corp-blue-light);
+      color: var(--corp-blue);
+      border-radius: 100px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 28px;
+    }
+    .corp-headline {
+      font-size: clamp(40px, 6vw, 72px);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      color: var(--corp-text);
+    }
+    .corp-headline-gradient {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .corp-subtext {
+      font-size: 18px;
+      color: var(--corp-text-muted);
+      max-width: 520px;
+      line-height: 1.6;
+      margin-bottom: 36px;
+    }
+    .corp-cta-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+    .corp-btn-primary {
+      background: var(--corp-blue);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--corp-font-display);
+      box-shadow: 0 1px 3px rgba(37,99,235,0.4);
+      transition: background 0.15s, transform 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .corp-btn-primary:hover { background: var(--corp-blue-dark); transform: translateY(-1px); }
+    .corp-btn-secondary {
+      background: transparent;
+      color: var(--corp-text);
+      border: 1px solid var(--corp-border);
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: var(--corp-font-display);
+      transition: background 0.15s;
+    }
+    .corp-btn-secondary:hover { background: var(--corp-blue-light); }
 
-    .corporate-logo {
-      font-size: 14px;
-      font-weight: 300;
-      letter-spacing: 4px;
-      color: #888;
-      margin-bottom: 60px;
+    /* Spinner for loading state */
+    @keyframes corp-spin {
+      to { transform: rotate(360deg); }
+    }
+    .corp-spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: corp-spin 0.6s linear infinite;
+      display: none;
+    }
+    .corp-btn-primary.loading .corp-spinner { display: block; }
+    .corp-btn-primary.loading .corp-btn-arrow { display: none; }
+
+    .corp-trust {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .corp-trust-label {
+      font-size: 12px;
+      color: var(--corp-text-muted);
+    }
+    .corp-trust-logos {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    .corp-trust-logo {
+      font-size: 12px;
+      font-weight: 600;
+      color: #cbd5e1;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
     }
 
-    .corporate-logo span { color: var(--corporate-blue); font-weight: 600; }
-
-    .corporate-headline {
-      font-size: 42px;
-      font-weight: 700;
-      color: #1a1a1a;
-      margin-bottom: 16px;
-      text-align: center;
+    /* Feature cards */
+    .corp-features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      padding: 0 40px 60px;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
     }
-
-    .corporate-subtext {
-      font-size: 18px;
-      color: #666;
-      margin-bottom: 48px;
+    .corp-card {
+      background: var(--corp-surface);
+      border: 1px solid var(--corp-border);
+      border-radius: 12px;
+      padding: 20px;
+      transition: box-shadow 0.2s;
     }
-
-    .corporate-btn {
-      background: var(--corporate-blue);
-      color: white;
-      border: none;
-      padding: 16px 48px;
-      font-size: 16px;
+    .corp-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+    .corp-card-icon { font-size: 16px; margin-bottom: 8px; }
+    .corp-card-title {
+      font-size: 14px;
       font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: transform 0.1s, box-shadow 0.1s;
-      box-shadow: 0 4px 12px rgba(37,99,235,0.4);
+      color: var(--corp-text);
+      margin-bottom: 6px;
     }
-
-    .corporate-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(37,99,235,0.5);
+    .corp-card-desc {
+      font-size: 13px;
+      color: var(--corp-text-muted);
+      line-height: 1.5;
     }
 
     @keyframes glitch {
@@ -189,6 +380,19 @@
     .hud-focus { display: flex; align-items: center; gap: 6px; }
     .hud-focus span { font-size: 16px; }
     .hud-timer { color: var(--beige); }
+    .hud-session { color: #8a7a40; font-size: 8px; }
+    .hud-exit-btn {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 7px;
+      background: transparent;
+      color: var(--beige);
+      border: 1px solid #444;
+      padding: 4px 8px;
+      cursor: pointer;
+      transition: background 0.1s, color 0.1s;
+    }
+    .hud-exit-btn:hover { background: var(--gold); color: var(--black); }
+    .hud-right { display: flex; align-items: center; gap: 10px; }
 
     .game-interaction {
       flex: 1;
@@ -260,8 +464,69 @@
     }
     .hud-danger { animation: hud-danger 0.5s ease-in-out infinite; }
 
-    /* ===== GAME OVER SCREEN ===== */
-    #screen-gameover {
+    /* ===== RETURN SCREEN ===== */
+    #screen-return {
+      background: var(--green-dark);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      font-family: 'Press Start 2P', monospace;
+      text-align: center;
+      position: relative;
+    }
+    #screen-return::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 2px,
+        rgba(0,0,0,0.3) 2px, rgba(0,0,0,0.3) 4px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+    .return-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .return-title {
+      font-size: 28px;
+      color: var(--gold);
+      text-shadow: 4px 4px 0 #000;
+      letter-spacing: 3px;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .return-subtitle {
+      font-size: 11px;
+      color: var(--beige);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .return-stats {
+      color: var(--gold);
+      font-size: 9px;
+      line-height: 2.5;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .return-message {
+      font-size: 9px;
+      color: var(--beige);
+      max-width: 400px;
+      line-height: 2;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    /* ===== WELCOME SCREEN ===== */
+    #screen-welcome {
       background: var(--black);
       flex-direction: column;
       align-items: center;
@@ -270,25 +535,14 @@
       font-family: 'Press Start 2P', monospace;
       text-align: center;
     }
-
-    .gameover-title {
-      font-size: 48px;
-      color: var(--red-dark);
-      text-shadow: 4px 4px 0 #000;
-      letter-spacing: 4px;
-    }
-
-    .gameover-subtitle {
-      font-size: 14px;
+    .welcome-line {
+      font-size: 18px;
       color: var(--beige);
-      margin-bottom: 20px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      text-shadow: 2px 2px 0 #000;
     }
-
-    .gameover-stats {
-      color: var(--gold);
-      font-size: 10px;
-      line-height: 2.5;
-    }
+    .welcome-line.visible { opacity: 1; }
 
     .pixel-btn {
       font-family: 'Press Start 2P', monospace;
@@ -463,17 +717,163 @@
     .achievement-label { font-size: 8px; color: #888; }
     .achievement-name { font-size: 10px; color: var(--gold); text-align: center; }
 
+    /* ===== INT-09 COFFEE BREAK ===== */
+    .coffee-cup {
+      position: relative;
+      width: 60px;
+      margin: 8px auto;
+    }
+    .coffee-body {
+      width: 60px; height: 50px;
+      background: #4a2800;
+      border: 3px solid var(--gold);
+      border-top: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .coffee-liquid {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 70%;
+      background: #6b3a00;
+      transition: height 0.8s ease;
+    }
+    .coffee-handle {
+      position: absolute;
+      right: -18px; top: 8px;
+      width: 14px; height: 24px;
+      border: 3px solid var(--gold);
+      border-left: none;
+      border-radius: 0 8px 8px 0;
+    }
+    .coffee-saucer {
+      width: 72px; height: 8px;
+      background: #4a2800;
+      border: 3px solid var(--gold);
+      margin: 0 auto;
+      margin-left: -6px;
+    }
+    @keyframes steam-rise {
+      0%   { opacity: 0; transform: translateY(0) scaleX(1); }
+      40%  { opacity: 0.8; }
+      100% { opacity: 0; transform: translateY(-30px) scaleX(1.4); }
+    }
+    .steam {
+      position: absolute;
+      bottom: 100%;
+      width: 6px; height: 20px;
+      border-radius: 3px;
+      background: rgba(200,200,200,0.5);
+      animation: steam-rise 1.2s ease-out infinite;
+    }
+    .steam:nth-child(1) { left: 12px; animation-delay: 0s; }
+    .steam:nth-child(2) { left: 28px; animation-delay: 0.4s; }
+    .steam:nth-child(3) { left: 42px; animation-delay: 0.8s; }
+
+    /* ===== INT-10 DO NOT DISTURB ===== */
+    .dnd-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      z-index: 20;
+      transition: opacity 0.5s;
+    }
+    .dnd-emoji { font-size: 48px; }
+    .dnd-label {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 14px;
+      color: var(--beige);
+      letter-spacing: 4px;
+    }
+    .dnd-timer {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 24px;
+      color: var(--gold);
+    }
+
     body { cursor: default; }
     #screen-game { cursor: crosshair; }
   </style>
 </head>
 <body>
+  <!-- Welcome Screen -->
+  <div id="screen-welcome" class="screen">
+  </div>
+
   <!-- Corporate Screen -->
-  <div id="screen-corporate" class="screen active">
-    <div class="corporate-logo">Pro<span>Flow</span>&#8482;</div>
-    <h1 class="corporate-headline">Optimize your productivity</h1>
-    <p class="corporate-subtext">Start your focused work session</p>
-    <button class="corporate-btn" id="btn-start">Start Working</button>
+  <div id="screen-corporate" class="screen">
+    <!-- Navbar -->
+    <nav class="corp-navbar">
+      <div class="corp-nav-logo">
+        <div class="corp-nav-logo-name">Pro<span>Flow</span>&#8482;</div>
+        <div class="corp-nav-logo-tag">AI-Powered Productivity Suite</div>
+      </div>
+      <ul class="corp-nav-links">
+        <li><a href="#">Features</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Enterprise</a></li>
+        <li><a href="#">Blog</a></li>
+      </ul>
+      <div class="corp-nav-actions">
+        <button class="corp-nav-login">Log in</button>
+        <button class="corp-nav-cta">Start free trial →</button>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="corp-hero">
+      <div class="corp-badge">&#10086; Trusted by 50,000+ teams worldwide</div>
+      <h1 class="corp-headline">
+        Do More.<br>
+        <span class="corp-headline-gradient">Achieve Everything.</span>&#8482;
+      </h1>
+      <p class="corp-subtext">ProFlow&#8482; aligns your human resources with synergized deliverables to maximize output bandwidth at scale.</p>
+      <div class="corp-cta-row">
+        <button class="corp-btn-primary" id="btn-start">
+          <div class="corp-spinner"></div>
+          <span class="corp-btn-arrow">Start Working →</span>
+        </button>
+        <button class="corp-btn-secondary">Watch demo &#9654;</button>
+      </div>
+      <div class="corp-trust">
+        <div class="corp-trust-label">Trusted by teams at</div>
+        <div class="corp-trust-logos">
+          <span class="corp-trust-logo">SYNCO</span>
+          <span class="corp-trust-logo">·</span>
+          <span class="corp-trust-logo">BLUEWAVE</span>
+          <span class="corp-trust-logo">·</span>
+          <span class="corp-trust-logo">NEXLIFY</span>
+          <span class="corp-trust-logo">·</span>
+          <span class="corp-trust-logo">QUANTEX</span>
+          <span class="corp-trust-logo">·</span>
+          <span class="corp-trust-logo">PEAKOPS</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature Cards -->
+    <div class="corp-features">
+      <div class="corp-card">
+        <div class="corp-card-icon">&#x1F9E0;</div>
+        <div class="corp-card-title">AI Focus Engine&#8482;</div>
+        <div class="corp-card-desc">Monitors your productivity levels and sends alerts when you stop performing optimally.</div>
+      </div>
+      <div class="corp-card">
+        <div class="corp-card-icon">&#x1F4CA;</div>
+        <div class="corp-card-title">Real-time Burnout Analytics</div>
+        <div class="corp-card-desc">Transform your exhaustion into actionable insights with proprietary stress indexing.</div>
+      </div>
+      <div class="corp-card">
+        <div class="corp-card-icon">&#x26A1;</div>
+        <div class="corp-card-title">Synergy Amplifier</div>
+        <div class="corp-card-desc">Aligns cross-functional stakeholders to unlock peak human capital utilization.</div>
+      </div>
+    </div>
   </div>
 
   <!-- Loading Screen -->
@@ -487,11 +887,15 @@
   <!-- Game Screen -->
   <div id="screen-game" class="screen">
     <div class="game-hud">
-      <div class="hud-title">ANTI-PRODUCTIVITY SIM</div>
+      <div class="hud-title">ProFlow&#8482;</div>
       <div class="hud-focus" id="hud-focus">
         <span>&#x1F9E0;</span><span>&#x1F9E0;</span><span>&#x1F9E0;</span><span>&#x1F9E0;</span><span>&#x1F9E0;</span>
       </div>
-      <div class="hud-timer" id="hud-timer">&#x23F1; 00:00</div>
+      <div class="hud-right">
+        <div class="hud-timer" id="hud-timer">TIEMPO RECUPERADO: 00:00</div>
+        <div class="hud-session" id="hud-session">SESI&#xD3;N: 05:00</div>
+        <button class="hud-exit-btn" id="btn-exit-session" title="Tu cerebro ya tuvo suficiente.">&#x21A9; VOLVER</button>
+      </div>
     </div>
     <div class="game-interaction">
       <div class="dialog-box">
@@ -502,12 +906,15 @@
     <div class="game-message-bar" id="message-bar"></div>
   </div>
 
-  <!-- Game Over Screen -->
-  <div id="screen-gameover" class="screen">
-    <div class="gameover-title">GAME OVER</div>
-    <div class="gameover-subtitle">YOU DID ACTUAL WORK</div>
-    <div class="gameover-stats" id="gameover-stats"></div>
-    <button class="pixel-btn" id="btn-play-again">[ PLAY AGAIN ]</button>
+  <!-- Return Screen -->
+  <div id="screen-return" class="screen">
+    <div class="return-content">
+      <div class="return-title" id="return-title">PAUSA COMPLETADA</div>
+      <div class="return-subtitle" id="return-subtitle">Tu cerebro fue debidamente in&#xFA;til.</div>
+      <div class="return-stats" id="return-stats"></div>
+      <div class="return-message" id="return-message"></div>
+      <button class="pixel-btn" id="btn-play-again" style="opacity:0;transition:opacity 0.4s;">[ VOLVER AL TRABAJO ]</button>
+    </div>
   </div>
 
   <!-- Achievement Overlay (always present, shown/hidden) -->
@@ -527,7 +934,11 @@
       cleanupFn: null,
       firstInteractionTime: null,
       _timerInterval: null,
-      _drainInterval: null
+      _drainInterval: null,
+      sessionDuration: 300,
+      sessionTimeLeft: 300,
+      _sessionInterval: null,
+      _firstVisit: true
     };
 
     function resetGameState() {
@@ -541,10 +952,13 @@
       GameState.passiveDrainPaused = false;
       GameState.cleanupFn = null;
       GameState.firstInteractionTime = null;
+      GameState.sessionTimeLeft = 300;
       if (GameState._timerInterval) clearInterval(GameState._timerInterval);
       if (GameState._drainInterval) clearInterval(GameState._drainInterval);
+      if (GameState._sessionInterval) clearInterval(GameState._sessionInterval);
       GameState._timerInterval = null;
       GameState._drainInterval = null;
+      GameState._sessionInterval = null;
     }
 
     // ===== SCREEN HELPERS =====
@@ -557,14 +971,58 @@
     // ===== SCREENS =====
     function showCorporateScreen() {
       resetGameState();
-      showScreen('corporate');
+      if (GameState._firstVisit) {
+        GameState._firstVisit = false;
+        showWelcomeScreen();
+      } else {
+        showScreen('corporate');
+      }
+    }
+
+    function showWelcomeScreen() {
+      showScreen('welcome');
+      const container = document.getElementById('screen-welcome');
+      container.replaceChildren();
+
+      const lines = [
+        { text: 'ALTO.', delay: 300 },
+        { text: 'Tienes 5 minutos.', delay: 900 },
+        { text: 'Aqu\u00ed no hay KPIs.', delay: 1500 },
+        { text: 'Ni sprints.', delay: 2100 },
+        { text: 'Ni Jira.', delay: 2700 },
+      ];
+
+      lines.forEach(({ text, delay }) => {
+        const el = document.createElement('div');
+        el.className = 'welcome-line';
+        el.textContent = text;
+        container.appendChild(el);
+        setTimeout(() => el.classList.add('visible'), delay);
+      });
+
+      const btn = document.createElement('button');
+      btn.className = 'pixel-btn welcome-line';
+      btn.textContent = '[ ENTRAR ]';
+      btn.style.marginTop = '20px';
+      container.appendChild(btn);
+      setTimeout(() => btn.classList.add('visible'), 3500);
+
+      btn.addEventListener('click', () => showScreen('corporate'));
     }
 
     // ===== BUTTON WIRING =====
     document.getElementById('btn-start').addEventListener('click', function() {
+      const btn = this;
+      btn.classList.add('loading');
       const corp = document.getElementById('screen-corporate');
-      corp.classList.add('glitching');
-      setTimeout(() => showLoadingScreen(), 500);
+      // Dim page slightly while "loading"
+      corp.style.opacity = '0.6';
+      setTimeout(() => {
+        corp.style.opacity = '';
+        btn.classList.remove('loading');
+        corp.classList.add('glitching');
+        setTimeout(() => showLoadingScreen(), 500);
+      }, 500);
     });
 
     // ===== LOADING SCREEN =====
@@ -586,15 +1044,20 @@
 
           setTimeout(() => {
             bar.style.width = '0%';
-            txt.textContent = 'FILE CORRUPT...';
-
+            txt.textContent = 'FILE CORRUPT';
             setTimeout(() => {
-              txt.textContent = 'LOADING ANYWAY';
-
+              txt.textContent = 'DEPLOYING MICROSERVICES...';
               setTimeout(() => {
-                showGameScreen();
-              }, 400);
-            }, 600);
+                txt.textContent = 'SYNCING WITH THE CLOUD...';
+                setTimeout(() => {
+                  txt.textContent = 'CLOUD UNAVAILABLE';
+                  setTimeout(() => {
+                    txt.textContent = 'LOADING ANYWAY';
+                    setTimeout(() => showGameScreen(), 400);
+                  }, 400);
+                }, 500);
+              }, 600);
+            }, 400);
           }, 800);
         } else {
           bar.style.width = progress + '%';
@@ -624,7 +1087,9 @@
 
     function updateHUD() {
       updateFocusDisplay();
-      document.getElementById('hud-timer').textContent = '\u23F1 ' + formatTime(GameState.timeWasted);
+      document.getElementById('hud-timer').textContent = 'TIEMPO RECUPERADO: ' + formatTime(GameState.timeWasted);
+      const sl = document.getElementById('hud-session');
+      if (sl) sl.textContent = 'SESI\u00D3N: ' + formatTime(GameState.sessionTimeLeft);
     }
 
     function startTimerWasted() {
@@ -637,12 +1102,40 @@
 
     // ===== DRAIN =====
     function applyFocusDelta(n) {
-      GameState.focusPoints = Math.max(0, GameState.focusPoints + n);
+      GameState.focusPoints = Math.min(100, Math.max(0, GameState.focusPoints + n));
       updateFocusDisplay();
       checkAchievements();
       if (GameState.focusPoints === 0) {
-        showGameOverScreen();
+        collapseAndReturn();
       }
+    }
+
+    function collapseAndReturn() {
+      teardownCurrentInteraction();
+      if (GameState._timerInterval) clearInterval(GameState._timerInterval);
+      if (GameState._drainInterval) clearInterval(GameState._drainInterval);
+      if (GameState._sessionInterval) clearInterval(GameState._sessionInterval);
+      // Red flash
+      const flash = document.createElement('div');
+      flash.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#8b0000;z-index:9999;transition:opacity 0.5s;';
+      document.body.appendChild(flash);
+      // Descending tone: 200Hz → 80Hz
+      try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(200, ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(80, ctx.currentTime + 0.4);
+        gain.gain.setValueAtTime(0.4, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+        osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.4);
+      } catch(e) {}
+      setTimeout(() => {
+        flash.style.opacity = '0';
+        setTimeout(() => { document.body.removeChild(flash); showReturnScreen(); }, 500);
+      }, 500);
     }
 
     function startPassiveDrain() {
@@ -652,31 +1145,59 @@
           playSound('drain');
           applyFocusDelta(-1);
         }
-      }, 3000);
+      }, 20000);
     }
 
-    // ===== GAME OVER =====
-    function showGameOverScreen() {
+    // ===== RETURN SCREEN =====
+    const RETURN_MESSAGES = [
+      'El Jira seguir\u00e1 ah\u00ed. T\u00fa, un poco mejor.',
+      'Productividad: sin cambios. Humanidad: restaurada.',
+      'Tu pr\u00f3xima reuni\u00f3n puede esperar 47 segundos m\u00e1s.',
+      'Estado: listo para fingir entusiasmo corporativo.',
+      'Descanso completado. Burnout: pospuesto.'
+    ];
+
+    function showReturnScreen() {
       teardownCurrentInteraction();
       if (GameState._timerInterval) clearInterval(GameState._timerInterval);
       if (GameState._drainInterval) clearInterval(GameState._drainInterval);
-      showScreen('gameover');
+      if (GameState._sessionInterval) clearInterval(GameState._sessionInterval);
+      showScreen('return');
 
-      const stats = document.getElementById('gameover-stats');
-      const lines = [
-        'TIME WASTED: ' + formatTime(GameState.timeWasted),
-        'INTERACTIONS SURVIVED: ' + GameState.interactionCount,
-        'ACHIEVEMENTS: ' + GameState.achievements.size + ' / 6'
-      ];
-      stats.textContent = '';
-      lines.forEach(line => {
-        const p = document.createElement('div');
-        p.textContent = line;
-        stats.appendChild(p);
-      });
+      const title    = document.getElementById('return-title');
+      const subtitle = document.getElementById('return-subtitle');
+      const stats    = document.getElementById('return-stats');
+      const msg      = document.getElementById('return-message');
+      const btn      = document.getElementById('btn-play-again');
+
+      // Reset visibility
+      [title, subtitle, stats, msg, btn].forEach(el => el.style.opacity = '0');
+
+      const reveal = (el, delay) => setTimeout(() => { el.style.opacity = '1'; }, delay);
+
+      reveal(title, 0);
+      reveal(subtitle, 800);
+
+      setTimeout(() => {
+        stats.innerHTML =
+          'TIEMPO RECUPERADO: ' + formatTime(GameState.timeWasted) + '<br>' +
+          'ABSURDOS SOBREVIVIDOS: ' + GameState.interactionCount + '<br>' +
+          'LOGROS DESBLOQUEADOS: ' + GameState.achievements.size + ' / 6';
+        reveal(stats, 0);
+      }, 1600);
+
+      setTimeout(() => {
+        msg.textContent = RETURN_MESSAGES[Math.floor(Math.random() * RETURN_MESSAGES.length)];
+        reveal(msg, 0);
+      }, 3000);
+
+      setTimeout(() => reveal(btn, 0), 4000);
     }
 
-    document.getElementById('btn-play-again').addEventListener('click', showCorporateScreen);
+    document.getElementById('btn-play-again').addEventListener('click', () => {
+      resetGameState();
+      showScreen('corporate');
+    });
 
     // ===== ENGINE =====
     function teardownCurrentInteraction() {
@@ -696,7 +1217,13 @@
       'CONGRATULATIONS ON YOUR PROGRESS (THERE IS NONE)',
       'YOUR CONTRIBUTION HAS BEEN NOTED AND IGNORED',
       'SYNERGY LEVELS: CRITICAL',
-      'PLEASE UPDATE YOUR STATUS IN JIRA'
+      'PLEASE UPDATE YOUR STATUS IN JIRA',
+      'TU BIENESTAR FUE PRIORIDAD. TEMPORALMENTE.',
+      'DESCANSO APROBADO POR RRHH (NO REALMENTE)',
+      'CORTISOL: LIGERAMENTE REDUCIDO',
+      'ESTADO DE \u00c1NIMO: MEJORADO UN 3%',
+      'SIGUIENTE ENTREGABLE: TODAV\u00cdA EXISTE',
+      'SISTEMA HUMANO: PARCIALMENTE REINICIADO'
     ];
 
     function completeInteraction(penalty, msg) {
@@ -757,10 +1284,26 @@
     // ===== GAME SCREEN =====
     function showGameScreen() {
       showScreen('game');
+      GameState.sessionTimeLeft = GameState.sessionDuration;
       updateHUD();
       startTimerWasted();
       startPassiveDrain();
+      startSessionTimer();
+      document.getElementById('btn-exit-session').onclick = () => showReturnScreen();
       setTimeout(() => loadRandomInteraction(), 500);
+    }
+
+    function startSessionTimer() {
+      if (GameState._sessionInterval) clearInterval(GameState._sessionInterval);
+      GameState._sessionInterval = setInterval(() => {
+        GameState.sessionTimeLeft--;
+        const sl = document.getElementById('hud-session');
+        if (sl) sl.textContent = 'SESI\u00D3N: ' + formatTime(GameState.sessionTimeLeft);
+        if (GameState.sessionTimeLeft <= 0) {
+          clearInterval(GameState._sessionInterval);
+          showReturnScreen();
+        }
+      }, 1000);
     }
 
     // ===== INT-01: CLICK QUEST =====
@@ -1364,7 +1907,7 @@
       let forceTimeout = null;
 
       function createEmail() {
-        if (done || visibleEmails.length >= 8) { spawnQueue++; return; }
+        if (done || visibleEmails.length >= 5) { spawnQueue++; return; }
         const email = document.createElement('div');
         email.style.cssText = 'position:absolute;font-size:22px;cursor:pointer;user-select:none;left:' + (10 + Math.random() * 75) + '%;top:' + (20 + Math.random() * 55) + '%;transform:translate(-50%,-50%);';
         email.textContent = '\uD83D\uDCE7';
@@ -1387,7 +1930,7 @@
 
       dequeueInterval = setInterval(() => {
         if (done) return;
-        while (spawnQueue > 0 && visibleEmails.length < 8) {
+        while (spawnQueue > 0 && visibleEmails.length < 5) {
           spawnQueue--;
           createEmail();
         }
@@ -1395,7 +1938,7 @@
 
       forceTimeout = setTimeout(() => {
         if (!done) { done = true; completeInteraction(-11, 'INBOX: INFINITY'); }
-      }, 25000);
+      }, 15000);
 
       GameState.cleanupFn = () => {
         done = true;
@@ -1517,7 +2060,132 @@
       };
     }
 
-    INTERACTIONS.push({ id: 'task_labyrinth', fn: interactionTaskLabyrinth });
+    // modo difícil — requiere más diseño
+    // INTERACTIONS_HARD.push({ id: 'task_labyrinth', fn: interactionTaskLabyrinth });
+
+    // ===== INT-09: COFFEE BREAK =====
+    function interactionCoffeeBreak() {
+      GameState.currentInteraction = 'coffee_break';
+      const area = document.getElementById('interaction-area');
+      const title = document.getElementById('interaction-title');
+      title.textContent = 'RECARGA DE SISTEMA';
+      area.replaceChildren();
+
+      const label = document.createElement('div');
+      label.style.cssText = 'font-family:"Press Start 2P",monospace;font-size:9px;color:var(--beige);margin-bottom:12px;';
+      label.textContent = 'T\u00f3mate un momento.';
+
+      // Cup structure
+      const cupWrapper = document.createElement('div');
+      cupWrapper.className = 'coffee-cup';
+
+      const body = document.createElement('div');
+      body.className = 'coffee-body';
+      const liquid = document.createElement('div');
+      liquid.className = 'coffee-liquid';
+      body.appendChild(liquid);
+      // steam
+      for (let i = 0; i < 3; i++) {
+        const s = document.createElement('div');
+        s.className = 'steam';
+        body.appendChild(s);
+      }
+      const handle = document.createElement('div');
+      handle.className = 'coffee-handle';
+      body.appendChild(handle);
+
+      const saucer = document.createElement('div');
+      saucer.className = 'coffee-saucer';
+
+      cupWrapper.appendChild(body);
+      cupWrapper.appendChild(saucer);
+
+      const drinkBtn = document.createElement('button');
+      drinkBtn.className = 'int-btn';
+      drinkBtn.style.marginTop = '16px';
+      drinkBtn.textContent = '[ BEBER ]';
+
+      const statusEl = document.createElement('div');
+      statusEl.style.cssText = 'font-family:"Press Start 2P",monospace;font-size:9px;color:var(--gold);min-height:20px;margin-top:8px;';
+
+      area.appendChild(label);
+      area.appendChild(cupWrapper);
+      area.appendChild(drinkBtn);
+      area.appendChild(statusEl);
+
+      let done = false;
+      drinkBtn.addEventListener('click', () => {
+        if (done) return;
+        done = true;
+        playSound('click');
+        liquid.style.height = '0%';
+        drinkBtn.style.display = 'none';
+        statusEl.textContent = 'CAFE\u00cdNA ABSORBIDA';
+        setTimeout(() => completeInteraction(+12, 'NIVEL DE HUMANIDAD RESTAURADO'), 900);
+      });
+
+      GameState.cleanupFn = () => {
+        area.replaceChildren();
+        title.textContent = '';
+      };
+    }
+
+    INTERACTIONS.push({ id: 'coffee_break', fn: interactionCoffeeBreak });
+
+    // ===== INT-10: DO NOT DISTURB =====
+    function interactionDoNotDisturb() {
+      GameState.currentInteraction = 'do_not_disturb';
+      GameState.passiveDrainPaused = true;
+      const area = document.getElementById('interaction-area');
+      const title = document.getElementById('interaction-title');
+      title.textContent = 'MODO NO MOLESTAR';
+      area.replaceChildren();
+
+      const overlay = document.createElement('div');
+      overlay.className = 'dnd-overlay';
+
+      const emoji = document.createElement('div');
+      emoji.className = 'dnd-emoji';
+      emoji.textContent = '\uD83D\uDD15';
+
+      const lbl = document.createElement('div');
+      lbl.className = 'dnd-label';
+      lbl.textContent = 'SILENCIO';
+
+      const timerEl = document.createElement('div');
+      timerEl.className = 'dnd-timer';
+      timerEl.textContent = '8';
+
+      overlay.appendChild(emoji);
+      overlay.appendChild(lbl);
+      overlay.appendChild(timerEl);
+      area.appendChild(overlay);
+
+      let timeLeft = 8;
+      let done = false;
+
+      const interval = setInterval(() => {
+        if (done) return;
+        timeLeft--;
+        timerEl.textContent = timeLeft;
+        if (timeLeft <= 0) {
+          done = true;
+          clearInterval(interval);
+          overlay.style.opacity = '0';
+          setTimeout(() => completeInteraction(+8, 'NOTIFICACIONES: IGNORADAS'), 500);
+        }
+      }, 1000);
+
+      GameState.cleanupFn = () => {
+        done = true;
+        clearInterval(interval);
+        GameState.passiveDrainPaused = false;
+        area.replaceChildren();
+        title.textContent = '';
+      };
+    }
+
+    INTERACTIONS.push({ id: 'do_not_disturb', fn: interactionDoNotDisturb });
 
     // ===== ACHIEVEMENTS SYSTEM =====
     const ACHIEVEMENT_DEFS = {
@@ -1597,6 +2265,9 @@
         setTimeout(_processAchievementQueue, 300);
       }, 3000);
     }
+
+    // ===== INIT =====
+    showLoadingScreen();
   </script>
 </body>
 </html>
