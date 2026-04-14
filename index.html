@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anti-Productivity Simulator</title>
+  <title>Simulador Anti-Productividad</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -860,18 +860,18 @@
     <div class="corp-features">
       <div class="corp-card">
         <div class="corp-card-icon">&#x1F9E0;</div>
-        <div class="corp-card-title">AI Focus Engine&#8482;</div>
-        <div class="corp-card-desc">Monitors your productivity levels and sends alerts when you stop performing optimally.</div>
+        <div class="corp-card-title">Motor de Enfoque IA&#8482;</div>
+        <div class="corp-card-desc">Monitorea tus niveles de productividad y env&#237;a alertas cuando dejas de rendir de forma &#243;ptima.</div>
       </div>
       <div class="corp-card">
         <div class="corp-card-icon">&#x1F4CA;</div>
-        <div class="corp-card-title">Real-time Burnout Analytics</div>
-        <div class="corp-card-desc">Transform your exhaustion into actionable insights with proprietary stress indexing.</div>
+        <div class="corp-card-title">An&#225;lisis de Burnout en Tiempo Real</div>
+        <div class="corp-card-desc">Transforma tu agotamiento en insights accionables con indexaci&#243;n de estr&#233;s patentada.</div>
       </div>
       <div class="corp-card">
         <div class="corp-card-icon">&#x26A1;</div>
-        <div class="corp-card-title">Synergy Amplifier</div>
-        <div class="corp-card-desc">Aligns cross-functional stakeholders to unlock peak human capital utilization.</div>
+        <div class="corp-card-title">Amplificador de Sinergia</div>
+        <div class="corp-card-desc">Alinea a los stakeholders multifuncionales para desbloquear la m&#225;xima utilizaci&#243;n del capital humano.</div>
       </div>
     </div>
   </div>
@@ -899,7 +899,7 @@
     </div>
     <div class="game-interaction">
       <div class="dialog-box">
-        <div class="dialog-title" id="interaction-title">LOADING...</div>
+        <div class="dialog-title" id="interaction-title">CARGANDO...</div>
         <div id="interaction-area"></div>
       </div>
     </div>
@@ -1031,7 +1031,7 @@
       const txt = document.getElementById('loading-text');
       const bar = document.getElementById('loading-bar');
 
-      txt.textContent = 'LOADING SAVE FILE...';
+      txt.textContent = 'CARGANDO ARCHIVO...';
       bar.style.width = '0%';
 
       let progress = 0;
@@ -1044,15 +1044,15 @@
 
           setTimeout(() => {
             bar.style.width = '0%';
-            txt.textContent = 'FILE CORRUPT';
+            txt.textContent = 'ARCHIVO CORRUPTO';
             setTimeout(() => {
-              txt.textContent = 'DEPLOYING MICROSERVICES...';
+              txt.textContent = 'DESPLEGANDO MICROSERVICIOS...';
               setTimeout(() => {
-                txt.textContent = 'SYNCING WITH THE CLOUD...';
+                txt.textContent = 'SINCRONIZANDO CON LA NUBE...';
                 setTimeout(() => {
-                  txt.textContent = 'CLOUD UNAVAILABLE';
+                  txt.textContent = 'NUBE NO DISPONIBLE';
                   setTimeout(() => {
-                    txt.textContent = 'LOADING ANYWAY';
+                    txt.textContent = 'CARGANDO DE TODAS FORMAS';
                     setTimeout(() => showGameScreen(), 400);
                   }, 400);
                 }, 500);
@@ -1208,16 +1208,16 @@
     }
 
     const IRONIC_MESSAGES = [
-      'PRODUCTIVITY DECREASED SUCCESSFULLY',
-      'GREAT JOB AVOIDING WORK',
-      'YOU ARE NOW 3% LESS EFFICIENT',
-      'BOSS IMPRESSION: MAXIMUM',
-      'THIS SESSION HAS BEEN LOGGED',
-      'HR HAS BEEN NOTIFIED (JUST KIDDING)',
-      'CONGRATULATIONS ON YOUR PROGRESS (THERE IS NONE)',
-      'YOUR CONTRIBUTION HAS BEEN NOTED AND IGNORED',
-      'SYNERGY LEVELS: CRITICAL',
-      'PLEASE UPDATE YOUR STATUS IN JIRA',
+      'PRODUCTIVIDAD REDUCIDA EXITOSAMENTE',
+      'BUEN TRABAJO EVITANDO EL TRABAJO',
+      'AHORA ERES UN 3% MENOS EFICIENTE',
+      'IMPRESI\u00d3N DEL JEFE: M\u00c1XIMA',
+      'ESTA SESI\u00d3N HA SIDO REGISTRADA',
+      'RRHH HA SIDO NOTIFICADO (MENTIRA)',
+      'FELICITACIONES POR TU PROGRESO (NO HUBO)',
+      'TU CONTRIBUCI\u00d3N FUE ANOTADA E IGNORADA',
+      'NIVELES DE SINERGIA: CR\u00cdTICOS',
+      'POR FAVOR ACTUALIZA TU ESTADO EN JIRA',
       'TU BIENESTAR FUE PRIORIDAD. TEMPORALMENTE.',
       'DESCANSO APROBADO POR RRHH (NO REALMENTE)',
       'CORTISOL: LIGERAMENTE REDUCIDO',
@@ -1311,7 +1311,7 @@
       GameState.currentInteraction = 'click_quest';
       const area = document.getElementById('interaction-area');
       const title = document.getElementById('interaction-title');
-      title.textContent = 'UNLOCK MOTIVATION';
+      title.textContent = 'DESBLOQUEAR MOTIVACI\u00d3N';
 
       area.replaceChildren();
       let count = 0;
@@ -1319,11 +1319,11 @@
 
       const counter = document.createElement('div');
       counter.className = 'int-counter';
-      counter.textContent = '0 / 37 CLICKS';
+      counter.textContent = '0 / 37 CLICS';
 
       const btn = document.createElement('button');
       btn.className = 'int-btn';
-      btn.textContent = 'CLICK ME';
+      btn.textContent = 'HAZME CLIC';
 
       area.appendChild(counter);
       area.appendChild(btn);
@@ -1340,13 +1340,13 @@
       function onClick() {
         playSound('click');
         count++;
-        counter.textContent = count + ' / 37 CLICKS';
+        counter.textContent = count + ' / 37 CLICS';
         if (count >= 37) {
           btn.removeEventListener('click', onClick);
           spawnConfetti();
           setTimeout(() => {
             showAchievement('CLICKED_WITHOUT_PURPOSE');
-            completeInteraction(-8, 'MOTIVATION NOT FOUND');
+            completeInteraction(-8, 'MOTIVACI\u00d3N NO ENCONTRADA');
           }, 1000);
         }
       }
@@ -1367,7 +1367,7 @@
       GameState.currentInteraction = 'elusive_button';
       const area = document.getElementById('interaction-area');
       const title = document.getElementById('interaction-title');
-      title.textContent = 'SUBMIT REPORT';
+      title.textContent = 'ENVIAR INFORME';
 
       area.replaceChildren();
       area.style.position = 'relative';
@@ -1377,11 +1377,11 @@
       attemptsLabel.style.fontSize = '11px';
       attemptsLabel.style.position = 'absolute';
       attemptsLabel.style.top = '8px';
-      attemptsLabel.textContent = 'ATTEMPTS REMAINING: 10';
+      attemptsLabel.textContent = 'INTENTOS RESTANTES: 10';
 
       const btn = document.createElement('button');
       btn.className = 'int-btn';
-      btn.textContent = 'SUBMIT';
+      btn.textContent = 'ENVIAR';
       btn.style.position = 'absolute';
       btn.style.left = '50%';
       btn.style.top = '50%';
@@ -1412,7 +1412,7 @@
         btn.style.top = newTop + 'px';
         btn.style.transform = 'none';
         teleports++;
-        attemptsLabel.textContent = 'ATTEMPTS REMAINING: ' + Math.max(0, 10 - teleports);
+        attemptsLabel.textContent = 'INTENTOS RESTANTES: ' + Math.max(0, 10 - teleports);
         if (teleports >= 10) freeze();
       }
 
@@ -1421,7 +1421,7 @@
         frozen = true;
         if (timeoutId) clearTimeout(timeoutId);
         btn.removeEventListener('mouseover', teleport);
-        btn.textContent = 'OK FINE, CLICK ME';
+        btn.textContent = 'BUENO, HAZME CLIC';
         btn.style.borderColor = 'var(--beige)';
         btn.addEventListener('click', onFrozenClick);
       }
@@ -1429,7 +1429,7 @@
       function onFrozenClick() {
         playSound('click');
         btn.removeEventListener('click', onFrozenClick);
-        completeInteraction(-10, 'REPORT SUCCESSFULLY AVOIDED');
+        completeInteraction(-10, 'INFORME EVITADO EXITOSAMENTE');
       }
 
       btn.addEventListener('mouseover', teleport);
@@ -1451,7 +1451,7 @@
       GameState.currentInteraction = 'meeting_escape';
       const area = document.getElementById('interaction-area');
       const title = document.getElementById('interaction-title');
-      title.textContent = 'ENEMY ENCOUNTERED';
+      title.textContent = 'ENEMIGO DETECTADO';
       playSound('meeting');
 
       area.replaceChildren();
@@ -1461,7 +1461,7 @@
       enemy.className = 'meeting-enemy';
       const label = document.createElement('div');
       label.className = 'meeting-label';
-      label.textContent = 'MEETING';
+      label.textContent = 'REUNI\u00d3N';
       enemy.appendChild(label);
 
       const barContainer = document.createElement('div');
@@ -1472,7 +1472,7 @@
 
       const instruction = document.createElement('div');
       instruction.style.cssText = 'font-family:"Press Start 2P",monospace;font-size:9px;color:var(--beige);position:absolute;top:8px;';
-      instruction.textContent = 'SURVIVE 10 SECONDS';
+      instruction.textContent = 'SOBREVIVE 10 SEGUNDOS';
 
       area.appendChild(enemy);
       area.appendChild(barContainer);
@@ -1534,7 +1534,7 @@
           cancelAnimationFrame(rafId);
           area.removeEventListener('mousemove', onMouseMove);
           showAchievement('MEETING_SURVIVOR');
-          completeInteraction(-12, 'YOU SURVIVED: MEETING THAT COULD HAVE BEEN AN EMAIL');
+          completeInteraction(-12, 'SOBREVIVISTE: REUNI\u00d3N QUE PUD\u00d3 SER UN EMAIL');
         }
       }, 100);
 
@@ -1557,7 +1557,7 @@
       GameState.currentInteraction = 'rupia_rain';
       const area = document.getElementById('interaction-area');
       const title = document.getElementById('interaction-title');
-      title.textContent = 'COLLECT RUPIAS';
+      title.textContent = 'RECOLECTAR RUPIAS';
 
       area.replaceChildren();
       area.style.position = 'relative';
@@ -1565,11 +1565,11 @@
 
       const counter = document.createElement('div');
       counter.style.cssText = 'position:absolute;top:8px;left:50%;transform:translateX(-50%);font-family:"Press Start 2P",monospace;font-size:9px;color:var(--gold);';
-      counter.textContent = 'GOLD: 0 / 10';
+      counter.textContent = 'ORO: 0 / 10';
 
       const timerEl = document.createElement('div');
       timerEl.style.cssText = 'position:absolute;top:28px;left:50%;transform:translateX(-50%);font-family:"Press Start 2P",monospace;font-size:8px;color:var(--beige);';
-      timerEl.textContent = 'TIME: 20';
+      timerEl.textContent = 'TIEMPO: 20';
 
       area.appendChild(counter);
       area.appendChild(timerEl);
@@ -1598,12 +1598,12 @@
           area.removeChild(r);
           if (isGold) {
             goldCaught++;
-            counter.textContent = 'GOLD: ' + goldCaught + ' / 10';
+            counter.textContent = 'ORO: ' + goldCaught + ' / 10';
             if (goldCaught >= 10) finish('win');
           } else {
             goldCaught = 0;
-            counter.textContent = 'GOLD: 0 / 10 (RESET!)';
-            setTimeout(() => { if (!done) counter.textContent = 'GOLD: 0 / 10'; }, 800);
+            counter.textContent = 'ORO: 0 / 10 (\u00a1RESET!)';
+            setTimeout(() => { if (!done) counter.textContent = 'ORO: 0 / 10'; }, 800);
           }
         });
 
@@ -1615,7 +1615,7 @@
         done = true;
         clearInterval(spawnInterval);
         clearInterval(timerInterval);
-        completeInteraction(-7, reason === 'win' ? 'WALLET FULL, PRODUCTIVITY EMPTY' : 'DROPPED EVERYTHING');
+        completeInteraction(-7, reason === 'win' ? 'BOLSILLO LLENO, PRODUCTIVIDAD VAC\u00cdA' : 'LO DEJASTE CAER TODO');
       }
 
       const spawnInterval = setInterval(spawnRupia, 800);
@@ -1623,7 +1623,7 @@
 
       const timerInterval = setInterval(() => {
         timeLeft--;
-        timerEl.textContent = 'TIME: ' + timeLeft;
+        timerEl.textContent = 'TIEMPO: ' + timeLeft;
         if (timeLeft <= 0) finish('timeout');
       }, 1000);
 
@@ -1645,7 +1645,7 @@
       GameState.passiveDrainPaused = true;
       const area = document.getElementById('interaction-area');
       const title = document.getElementById('interaction-title');
-      title.textContent = 'DAILY STANDUP';
+      title.textContent = 'STANDUP DIARIO';
 
       area.replaceChildren();
 
@@ -1659,7 +1659,7 @@
 
       const leaveBtn = document.createElement('button');
       leaveBtn.className = 'int-btn';
-      leaveBtn.textContent = 'LEAVE MEETING';
+      leaveBtn.textContent = 'SALIR DE LA REUNI\u00d3N';
       leaveBtn.style.display = 'none';
 
       area.appendChild(timerDisplay);
@@ -1679,14 +1679,14 @@
 
         if (seconds <= 0) {
           resets++;
-          statusText.textContent = 'RESCHEDULED TO TOMORROW';
+          statusText.textContent = 'REPROGRAMADO PARA MA\u00d1ANA';
           timerDisplay.textContent = '';
           setTimeout(() => {
             if (done) return;
             statusText.textContent = '';
             if (resets >= 3) {
               leaveBtn.style.display = 'inline-block';
-              timerDisplay.textContent = 'WAITING...';
+              timerDisplay.textContent = 'ESPERANDO...';
               clearInterval(interval);
             } else {
               seconds = 30;
@@ -1700,7 +1700,7 @@
         if (done) return;
         done = true;
         playSound('click');
-        completeInteraction(-6, 'FREEDOM ACHIEVED (TEMPORARILY)');
+        completeInteraction(-6, 'LIBERTAD ALCANZADA (TEMPORALMENTE)');
       });
 
       GameState.cleanupFn = () => {
@@ -1767,13 +1767,13 @@
       GameState.currentInteraction = 'progress_bar';
       const area = document.getElementById('interaction-area');
       const title = document.getElementById('interaction-title');
-      title.textContent = 'UPLOADING TPS REPORT';
+      title.textContent = 'SUBIENDO INFORME TPS';
 
       area.replaceChildren();
 
       const barLabel = document.createElement('div');
       barLabel.style.cssText = 'font-family:"Press Start 2P",monospace;font-size:9px;color:var(--beige);margin-bottom:8px;';
-      barLabel.textContent = 'ATTEMPT 1 / 4';
+      barLabel.textContent = 'INTENTO 1 / 4';
 
       const barContainer = document.createElement('div');
       barContainer.className = 'upload-bar-container';
@@ -1786,7 +1786,7 @@
 
       const tooltip = document.createElement('div');
       tooltip.style.cssText = 'font-family:"Press Start 2P",monospace;font-size:8px;color:var(--gold);margin-top:12px;display:none;';
-      tooltip.textContent = 'DO NOT MOVE THE MOUSE';
+      tooltip.textContent = 'NO MUEVAS EL MOUSE';
 
       area.appendChild(barLabel);
       area.appendChild(barContainer);
@@ -1805,7 +1805,7 @@
         attempt++;
         progress = 0;
         barFill.style.width = '0%';
-        barLabel.textContent = 'ATTEMPT ' + attempt + ' / 4';
+        barLabel.textContent = 'INTENTO ' + attempt + ' / 4';
         statusText.textContent = '';
 
         if (attempt <= 3) {
@@ -1817,7 +1817,7 @@
               barFill.style.width = '99%';
               clearInterval(fillInterval);
               fillInterval = null;
-              statusText.textContent = 'CONNECTION LOST';
+              statusText.textContent = 'CONEXI\u00d3N PERDIDA';
               setTimeout(() => { if (!done) startAttempt(); }, 1000);
             } else {
               barFill.style.width = progress + '%';
@@ -1851,7 +1851,7 @@
                 fillInterval = null;
                 document.removeEventListener('mousemove', onMouseMove);
                 done = true;
-                completeInteraction(-9, "SCHRODINGER'S UPLOAD: COMPLETE");
+                completeInteraction(-9, 'CARGA DE SCHR\u00d6DINGER: COMPLETA');
               }
             }, 100);
           }
@@ -1889,14 +1889,14 @@
       GameState.currentInteraction = 'inbox_zero';
       const area = document.getElementById('interaction-area');
       const title = document.getElementById('interaction-title');
-      title.textContent = 'INBOX';
+      title.textContent = 'BANDEJA DE ENTRADA';
 
       area.replaceChildren();
       area.style.position = 'relative';
 
       const counterEl = document.createElement('div');
       counterEl.style.cssText = 'font-family:"Press Start 2P",monospace;font-size:9px;color:var(--gold);position:absolute;top:4px;left:50%;transform:translateX(-50%);white-space:nowrap;';
-      counterEl.textContent = 'DELETED: 0';
+      counterEl.textContent = 'ELIMINADOS: 0';
       area.appendChild(counterEl);
 
       let totalDeleted = 0;
@@ -1921,7 +1921,7 @@
           visibleEmails = visibleEmails.filter(e => e !== email);
           spawnQueue += 3;
           totalDeleted++;
-          counterEl.textContent = 'DELETED: ' + totalDeleted;
+          counterEl.textContent = 'ELIMINADOS: ' + totalDeleted;
           if (totalDeleted === 20 && !done) showAchievement('INBOX_HERO');
         });
       }
@@ -1937,7 +1937,7 @@
       }, 300);
 
       forceTimeout = setTimeout(() => {
-        if (!done) { done = true; completeInteraction(-11, 'INBOX: INFINITY'); }
+        if (!done) { done = true; completeInteraction(-11, 'BANDEJA: INFINITA'); }
       }, 15000);
 
       GameState.cleanupFn = () => {
@@ -2189,11 +2189,11 @@
 
     // ===== ACHIEVEMENTS SYSTEM =====
     const ACHIEVEMENT_DEFS = {
-      CLICKED_WITHOUT_PURPOSE: 'CLICKED WITHOUT PURPOSE',
-      MEETING_SURVIVOR: 'MEETING SURVIVOR',
-      PROFESSIONAL_PROCRASTINATOR: 'PROFESSIONAL PROCRASTINATOR',
-      THE_FLOOR_IS_DEADLINES: 'THE FLOOR IS DEADLINES',
-      INBOX_HERO: 'INBOX HERO',
+      CLICKED_WITHOUT_PURPOSE: 'CLIC SIN PROP\u00d3SITO',
+      MEETING_SURVIVOR: 'SOBREVIVIENTE DE REUNI\u00d3N',
+      PROFESSIONAL_PROCRASTINATOR: 'PROCRASTINADOR PROFESIONAL',
+      THE_FLOOR_IS_DEADLINES: 'EL SUELO SON DEADLINES',
+      INBOX_HERO: 'H\u00c9ROE DE LA BANDEJA',
       SPEEDRUNNER: 'SPEEDRUNNER'
     };
 
@@ -2246,7 +2246,7 @@
 
       const label = document.createElement('div');
       label.className = 'achievement-label';
-      label.textContent = 'YOU GOT:';
+      label.textContent = 'OBTUVISTE:';
       const nameEl = document.createElement('div');
       nameEl.className = 'achievement-name';
       nameEl.textContent = name;
