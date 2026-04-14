@@ -2212,6 +2212,344 @@
 
     INTERACTIONS.push({ id: 'do_not_disturb', fn: interactionDoNotDisturb });
 
+    // ===== INT-11: CODE RUNNER =====
+    function interactionCodeRunner() {
+      GameState.currentInteraction = 'code_runner';
+      const area = document.getElementById('interaction-area');
+      const title = document.getElementById('interaction-title');
+      title.textContent = 'ELIMINAR C\u00d3DIGO';
+      area.replaceChildren();
+      area.style.position = 'relative';
+
+      // Contenedor del juego
+      const canvas = document.createElement('div');
+      canvas.style.cssText = 'position:relative;width:100%;height:180px;background:#050e05;border:3px solid var(--gold);overflow:hidden;box-shadow:inset 0 0 20px rgba(0,0,0,0.8);';
+
+      // Suelo
+      const ground = document.createElement('div');
+      ground.style.cssText = 'position:absolute;bottom:40px;left:0;right:0;height:2px;background:var(--gold);opacity:0.6;';
+      canvas.appendChild(ground);
+
+      // Personaje (cursor pixelart)
+      const runner = document.createElement('div');
+      runner.style.cssText = `
+        position:absolute;left:50px;bottom:42px;
+        width:16px;height:24px;background:var(--beige);
+        box-shadow:0 -4px 0 var(--beige),-4px 0 0 var(--gold),4px 0 0 var(--gold);
+      `;
+      canvas.appendChild(runner);
+
+      const scoreEl = document.createElement('div');
+      scoreEl.style.cssText = 'position:absolute;top:8px;right:10px;font-family:"Press Start 2P",monospace;font-size:8px;color:var(--gold);';
+      scoreEl.textContent = 'ESQUIVADAS: 0';
+
+      const instrEl = document.createElement('div');
+      instrEl.style.cssText = 'position:absolute;top:8px;left:10px;font-family:"Press Start 2P",monospace;font-size:7px;color:#555;';
+      instrEl.textContent = 'ESPACIO / CLIC = SALTAR';
+
+      const timerEl = document.createElement('div');
+      timerEl.style.cssText = 'position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-family:"Press Start 2P",monospace;font-size:8px;color:var(--beige);';
+      timerEl.textContent = 'TIEMPO: 15';
+
+      canvas.appendChild(scoreEl);
+      canvas.appendChild(instrEl);
+      canvas.appendChild(timerEl);
+      area.appendChild(canvas);
+
+      const CODE_SNIPPETS = ['for(;;){', 'while(true)', 'if(burnout)', 'TODO: fix', 'undefined', 'null.exe', 'git blame', '// FIXME', 'catch(e){}', 'NaN error', 'git rebase'];
+
+      let isJumping = false;
+      let jumpVel = 0;
+      let posY = 0;       // px por encima del suelo
+      let obstacles = [];
+      let dodged = 0;
+      let done = false;
+      let rafId = null;
+      let speed = 3.5;
+      let timeLeft = 15;
+      const GRAVITY = 0.7;
+      const JUMP_FORCE = -13;
+      const GROUND_Y = 42; // bottom desde canvas
+
+      function doJump() {
+        if (done || isJumping) return;
+        isJumping = true;
+        jumpVel = JUMP_FORCE;
+        playSound('click');
+      }
+
+      // Listeners de salto
+      const onKey = (e) => { if (e.code === 'Space') { e.preventDefault(); doJump(); } };
+      const onClick = () => doJump();
+      document.addEventListener('keydown', onKey);
+      canvas.addEventListener('click', onClick);
+
+      // Spawn de obstáculos
+      let spawnTimer = 0;
+      let spawnInterval = 60 + Math.random() * 40;
+
+      function spawnObs() {
+        const h = Math.random() > 0.5 ? 22 : 36;
+        const txt = CODE_SNIPPETS[Math.floor(Math.random() * CODE_SNIPPETS.length)];
+        const obs = document.createElement('div');
+        obs.style.cssText = `position:absolute;bottom:${GROUND_Y}px;font-family:"Press Start 2P",monospace;font-size:7px;color:var(--gold);background:#0a1a0a;border:2px solid var(--gold);padding:2px 5px;white-space:nowrap;height:${h}px;display:flex;align-items:center;`;
+        obs.textContent = txt;
+        obs.dataset.x = canvas.clientWidth + 10;
+        obs.style.left = obs.dataset.x + 'px';
+        canvas.appendChild(obs);
+        obstacles.push(obs);
+      }
+
+      // Timer de sesión
+      const countInterval = setInterval(() => {
+        if (done) return;
+        timeLeft--;
+        timerEl.textContent = 'TIEMPO: ' + timeLeft;
+        if (timeLeft <= 0) {
+          done = true;
+          clearInterval(countInterval);
+          cancelAnimationFrame(rafId);
+          document.removeEventListener('keydown', onKey);
+          completeInteraction(-9, 'C\u00d3DIGO LEGACY SOBREVIVIDO');
+        }
+      }, 1000);
+
+      let frame = 0;
+      function loop() {
+        if (done) return;
+        frame++;
+
+        // Física del salto
+        if (isJumping) {
+          jumpVel += GRAVITY;
+          posY -= jumpVel;
+          if (posY <= 0) { posY = 0; jumpVel = 0; isJumping = false; }
+          runner.style.bottom = (GROUND_Y + posY) + 'px';
+        }
+
+        // Aumentar velocidad gradualmente
+        if (frame % 300 === 0) speed += 0.4;
+
+        // Spawn
+        spawnTimer++;
+        if (spawnTimer >= spawnInterval) {
+          spawnObs();
+          spawnTimer = 0;
+          spawnInterval = 50 + Math.random() * 50;
+        }
+
+        // Mover obstáculos + colisión
+        const runnerLeft = 50, runnerRight = 66;
+        const runnerBottom = GROUND_Y + posY;
+        const runnerTop = runnerBottom + 24;
+
+        obstacles = obstacles.filter(obs => {
+          let x = parseFloat(obs.dataset.x) - speed;
+          obs.dataset.x = x;
+          obs.style.left = x + 'px';
+
+          const obsW = obs.offsetWidth || 60;
+          const obsH = parseInt(obs.style.height) || 22;
+          const obsLeft = x, obsRight = x + obsW;
+          const obsTop = GROUND_Y + obsH;
+
+          // Colisión
+          if (obsRight > runnerLeft && obsLeft < runnerRight && runnerBottom < obsTop) {
+            done = true;
+            clearInterval(countInterval);
+            cancelAnimationFrame(rafId);
+            document.removeEventListener('keydown', onKey);
+            obs.style.background = '#3a0000';
+            obs.style.borderColor = 'var(--red-dark)';
+            setTimeout(() => completeInteraction(-9, 'RUNTIME ERROR: APLASTADO'), 400);
+            return false;
+          }
+
+          // Pasó el runner → esquivada
+          if (x + obsW < 50 && !obs.dataset.counted) {
+            obs.dataset.counted = '1';
+            dodged++;
+            scoreEl.textContent = 'ESQUIVADAS: ' + dodged;
+          }
+
+          if (x + obsW < -10) { canvas.removeChild(obs); return false; }
+          return true;
+        });
+
+        rafId = requestAnimationFrame(loop);
+      }
+
+      rafId = requestAnimationFrame(loop);
+
+      GameState.cleanupFn = () => {
+        done = true;
+        cancelAnimationFrame(rafId);
+        clearInterval(countInterval);
+        document.removeEventListener('keydown', onKey);
+        area.replaceChildren();
+        area.style.position = '';
+        title.textContent = '';
+      };
+    }
+
+    INTERACTIONS.push({ id: 'code_runner', fn: interactionCodeRunner });
+
+    // ===== INT-12: RECHAZAR LLAMADAS =====
+    function interactionRejectCalls() {
+      GameState.currentInteraction = 'reject_calls';
+      const area = document.getElementById('interaction-area');
+      const title = document.getElementById('interaction-title');
+      title.textContent = 'RECHAZAR LLAMADAS';
+      area.replaceChildren();
+      area.style.position = 'relative';
+      area.style.overflow = 'hidden';
+
+      const CALLERS = [
+        'Jefe (urgente)',
+        'Reuni\u00f3n 3pm',
+        'Scrum Master',
+        'Cliente ACME',
+        'RR.HH.',
+        'IT Support',
+        'CEO',
+        'Revisor PR',
+        'Stakeholder',
+        'Tu jefe jefe',
+        'Auditor\u00eda',
+        'Sales Team'
+      ];
+
+      const infoEl = document.createElement('div');
+      infoEl.style.cssText = 'position:absolute;top:8px;left:50%;transform:translateX(-50%);font-family:"Press Start 2P",monospace;font-size:8px;color:var(--gold);white-space:nowrap;';
+      infoEl.textContent = 'RECHAZADAS: 0 / 8';
+      area.appendChild(infoEl);
+
+      let rejected = 0;
+      let done = false;
+      let spawnId = null;
+      const activeCards = [];
+      let spawnDelay = 2200;
+
+      function spawnCall() {
+        if (done) return;
+        const caller = CALLERS[Math.floor(Math.random() * CALLERS.length)];
+
+        const card = document.createElement('div');
+        // Posición aleatoria dentro del área
+        const maxLeft = 55, minLeft = 5;
+        const maxTop  = 55, minTop  = 15;
+        const left = minLeft + Math.random() * maxLeft;
+        const top  = minTop  + Math.random() * maxTop;
+
+        card.style.cssText = `
+          position:absolute;left:${left}%;top:${top}%;
+          width:200px;
+          background:#111;border:2px solid #333;border-radius:14px;
+          font-family:'Press Start 2P',monospace;
+          padding:14px 12px 10px;
+          box-shadow:0 8px 24px rgba(0,0,0,0.8);
+          animation:callShake 0.3s ease;
+          z-index:${10 + activeCards.length};
+        `;
+
+        // Icono + nombre
+        const icon = document.createElement('div');
+        icon.style.cssText = 'font-size:28px;text-align:center;margin-bottom:6px;';
+        icon.textContent = '\uD83D\uDCDE';
+
+        const name = document.createElement('div');
+        name.style.cssText = 'font-size:7px;color:#eee;text-align:center;margin-bottom:10px;line-height:1.6;';
+        name.textContent = caller;
+
+        const sub = document.createElement('div');
+        sub.style.cssText = 'font-size:6px;color:#666;text-align:center;margin-bottom:12px;';
+        sub.textContent = 'Llamada entrante...';
+
+        // Botones
+        const btnRow = document.createElement('div');
+        btnRow.style.cssText = 'display:flex;gap:8px;justify-content:center;';
+
+        const btnReject = document.createElement('button');
+        btnReject.style.cssText = 'font-family:"Press Start 2P",monospace;font-size:6px;background:#8b0000;color:#fff;border:none;border-radius:20px;padding:6px 10px;cursor:pointer;';
+        btnReject.textContent = '\u274C RECHAZAR';
+
+        const btnAccept = document.createElement('button');
+        btnAccept.style.cssText = 'font-family:"Press Start 2P",monospace;font-size:6px;background:#1a4a1a;color:#aaa;border:none;border-radius:20px;padding:6px 10px;cursor:not-allowed;opacity:0.5;';
+        btnAccept.textContent = '\u2705 ACEPTAR';
+        btnAccept.title = 'No hagas eso.';
+
+        btnRow.appendChild(btnReject);
+        btnRow.appendChild(btnAccept);
+        card.appendChild(icon);
+        card.appendChild(name);
+        card.appendChild(sub);
+        card.appendChild(btnRow);
+        area.appendChild(card);
+        activeCards.push(card);
+
+        // Vibrar al aparecer
+        playSound('meeting');
+
+        btnReject.addEventListener('click', () => {
+          if (done) return;
+          playSound('click');
+          card.style.transform = 'scale(0.8)';
+          card.style.opacity = '0';
+          card.style.transition = 'all 0.2s';
+          setTimeout(() => {
+            if (area.contains(card)) area.removeChild(card);
+            const idx = activeCards.indexOf(card);
+            if (idx > -1) activeCards.splice(idx, 1);
+          }, 200);
+          rejected++;
+          infoEl.textContent = 'RECHAZADAS: ' + rejected + ' / 8';
+          if (rejected >= 8 && !done) {
+            done = true;
+            clearTimeout(spawnId);
+            setTimeout(() => completeInteraction(-8, 'MODO AVIÓN ACTIVADO'), 300);
+          }
+        });
+
+        // Auto-desaparecer a los 6 segundos si no se rechaza
+        setTimeout(() => {
+          if (!done && area.contains(card)) {
+            card.style.opacity = '0';
+            card.style.transition = 'opacity 0.3s';
+            setTimeout(() => {
+              if (area.contains(card)) area.removeChild(card);
+              const idx = activeCards.indexOf(card);
+              if (idx > -1) activeCards.splice(idx, 1);
+            }, 300);
+          }
+        }, 6000);
+
+        // Acelerar spawns
+        if (spawnDelay > 900) spawnDelay -= 150;
+        if (!done) spawnId = setTimeout(spawnCall, spawnDelay);
+      }
+
+      // Inyectar keyframe shake si no existe
+      if (!document.getElementById('call-shake-style')) {
+        const st = document.createElement('style');
+        st.id = 'call-shake-style';
+        st.textContent = '@keyframes callShake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }';
+        document.head.appendChild(st);
+      }
+
+      spawnId = setTimeout(spawnCall, 400);
+
+      GameState.cleanupFn = () => {
+        done = true;
+        clearTimeout(spawnId);
+        area.replaceChildren();
+        area.style.position = '';
+        area.style.overflow = '';
+        title.textContent = '';
+      };
+    }
+
+    INTERACTIONS.push({ id: 'reject_calls', fn: interactionRejectCalls });
+
     // ===== ACHIEVEMENTS SYSTEM =====
     const ACHIEVEMENT_DEFS = {
       CLICKED_WITHOUT_PURPOSE: 'CLIC SIN PROP\u00d3SITO',
